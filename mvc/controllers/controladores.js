@@ -59,7 +59,7 @@ const handleRegistro = async (req, res) => {
     // Crear el usuario (guardamos estado y municipio en el nombre por ahora)
     // En producción, sería mejor agregar campos a la tabla
     const nombreCompleto = `${nombre} (${estado}, ${municipio})`;
-    const nuevoUsuario = await Usuario.create({
+    const nuevoUsuarioId = await Usuario.create({
       email,
       password_hash,
       nombre: nombreCompleto,
@@ -67,14 +67,22 @@ const handleRegistro = async (req, res) => {
       rol: 'comercial'
     });
 
-    // Retornar éxito (sin la contraseña)
+    // Obtener el usuario completo recién creado para autenticarlo automáticamente
+    const usuarioCreado = await Usuario.getById(nuevoUsuarioId);
+    
+    if (!usuarioCreado) {
+      return res.status(500).json({ error: 'Error al obtener usuario creado' });
+    }
+
+    // Retornar éxito con todos los datos del usuario (igual que en login)
     res.status(201).json({
       success: true,
       message: 'Usuario registrado exitosamente',
       usuario: {
-        id: nuevoUsuario,
-        email,
-        nombre: nombreCompleto
+        id: usuarioCreado.id_usuario,
+        email: usuarioCreado.email,
+        nombre: usuarioCreado.nombre || nombreCompleto,
+        rol: usuarioCreado.rol || 'comercial'
       }
     });
   } catch (error) {

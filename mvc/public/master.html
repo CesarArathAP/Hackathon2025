@@ -230,16 +230,20 @@
 
               var data = await response.json();
 
-              if (response.ok && data.success) {
-                // Guardar información del usuario en localStorage
+              if (response.ok && data.success && data.usuario) {
+                // Guardar información del usuario en localStorage (autenticación automática)
                 localStorage.setItem('usuario', JSON.stringify(data.usuario));
                 localStorage.setItem('isLoggedIn', 'true');
                 
-                // Cerrar modal y redirigir a formulario
+                // Cerrar modal, actualizar UI y redirigir a formulario
                 registerModal.hide();
-                updateAuthUI();
-                frame.src = '/formulario.html?embed=1';
-                history.pushState(null, '', '/formulario');
+                
+                // Pequeño delay para asegurar que el modal se cierre antes de actualizar UI
+                setTimeout(function() {
+                  updateAuthUI();
+                  frame.src = '/formulario.html?embed=1';
+                  history.pushState(null, '', '/formulario');
+                }, 100);
               } else {
                 regError.textContent = data.error || 'Error al registrar usuario';
                 regError.classList.remove('d-none');
@@ -259,12 +263,15 @@
           var usuario = null;
           
           try {
-            if (usuarioStr) {
+            if (usuarioStr && usuarioStr !== 'null' && usuarioStr !== 'undefined') {
               usuario = JSON.parse(usuarioStr);
             }
           } catch (e) {
             console.error('Error al parsear usuario:', e);
             usuario = null;
+            // Limpiar datos inválidos
+            localStorage.removeItem('usuario');
+            localStorage.removeItem('isLoggedIn');
           }
           
           var btnLogin = document.getElementById('btn-login');
@@ -273,7 +280,11 @@
           var btnLogout = document.getElementById('btn-logout');
           var navFormulario = document.getElementById('nav-item-formulario');
 
-          if (isLoggedIn && usuario) {
+          // Verificar que el usuario tenga al menos id o email
+          var usuarioValido = usuario && (usuario.id || usuario.email);
+          
+          if (isLoggedIn && usuarioValido) {
+            // Usuario autenticado
             if (btnLogin) btnLogin.classList.add('d-none');
             if (userInfo) userInfo.classList.remove('d-none');
             if (userName) {
@@ -287,6 +298,7 @@
             }
             if (navFormulario) navFormulario.classList.remove('d-none');
           } else {
+            // Usuario no autenticado
             if (btnLogin) btnLogin.classList.remove('d-none');
             if (userInfo) userInfo.classList.add('d-none');
             if (navFormulario) navFormulario.classList.add('d-none');
