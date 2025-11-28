@@ -24,47 +24,56 @@ router.get('/usuario/:id', async (req, res) => {
   }
 });
 
-// Obtener un diagnóstico por ID
-router.get('/:id', async (req, res) => {
-  try {
-    const diagnostico = await Diagnostico.getById(req.params.id);
-    if (!diagnostico) {
-      return res.status(404).json({ error: 'Diagnóstico no encontrado' });
-    }
-    res.json(diagnostico);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Descargar PDF de un diagnóstico
+// Descargar PDF de un diagnóstico (DEBE ir ANTES de /:id para que Express lo capture correctamente)
 router.get('/:id/pdf', async (req, res) => {
   try {
-    const diagnostico = await Diagnostico.getById(req.params.id);
+    const diagnosticoId = req.params.id;
+    console.log(`📄 Buscando PDF para diagnóstico ID: ${diagnosticoId}`);
+    
+    const diagnostico = await Diagnostico.getById(diagnosticoId);
     if (!diagnostico) {
+      console.error(`❌ Diagnóstico con ID ${diagnosticoId} no encontrado en BD`);
       return res.status(404).json({ error: 'Diagnóstico no encontrado' });
     }
+    
+    console.log(`✓ Diagnóstico encontrado:`, {
+      id: diagnostico.id_diagnostico,
+      nombre: diagnostico.nombre,
+      id_usuario: diagnostico.id_usuario
+    });
 
-    // Buscar el PDF en ambas ubicaciones posibles
-    const pdfPathNueva = path.join(__dirname, '../../diagnosticos', diagnostico.nombre);
-    const pdfPathAntigua = path.join(__dirname, '../../assets/diagnosticos', diagnostico.nombre);
+    // Rutas absolutas basadas en la raíz del proyecto
+    // __dirname aquí es: mvc/controllers/
+    // Los PDFs ahora se guardan en mvc/assets/diagnosticos/
+    const projectRoot = path.resolve(__dirname, '../..');
+    const pdfPathNueva = path.join(projectRoot, 'mvc', 'assets', 'diagnosticos', diagnostico.nombre);
+    const pdfPathAntigua = path.join(projectRoot, 'diagnosticos', diagnostico.nombre); // Fallback a ubicación antigua
     
     let pdfPath = null;
     
-    // Intentar primero en la nueva ubicación (raíz/diagnosticos)
+    // Intentar primero en la nueva ubicación (mvc/assets/diagnosticos)
     try {
       await fs.access(pdfPathNueva);
       pdfPath = pdfPathNueva;
-    } catch {
-      // Si no está en la nueva ubicación, buscar en la antigua
+      console.log(`✓ PDF encontrado en: ${pdfPathNueva}`);
+    } catch (err) {
+      // Si no está en la nueva ubicación, buscar en la antigua (raíz/diagnosticos)
       try {
         await fs.access(pdfPathAntigua);
         pdfPath = pdfPathAntigua;
-      } catch {
+        console.log(`✓ PDF encontrado en ubicación antigua: ${pdfPathAntigua}`);
+      } catch (err2) {
+        console.error('PDF no encontrado en ninguna ubicación:');
+        console.error('  Nueva:', pdfPathNueva);
+        console.error('  Antigua:', pdfPathAntigua);
+        console.error('  Nombre en BD:', diagnostico.nombre);
         return res.status(404).json({ 
           error: 'Archivo PDF no encontrado',
           nombre: diagnostico.nombre,
-          ubicaciones_buscadas: [pdfPathNueva, pdfPathAntigua]
+          ubicaciones_buscadas: [
+            pdfPathNueva,
+            pdfPathAntigua
+          ]
         });
       }
     }
@@ -82,6 +91,19 @@ router.get('/:id/pdf', async (req, res) => {
     });
   } catch (error) {
     console.error('Error en ruta PDF:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Obtener un diagnóstico por ID (DEBE ir DESPUÉS de /:id/pdf)
+router.get('/:id', async (req, res) => {
+  try {
+    const diagnostico = await Diagnostico.getById(req.params.id);
+    if (!diagnostico) {
+      return res.status(404).json({ error: 'Diagnóstico no encontrado' });
+    }
+    res.json(diagnostico);
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
@@ -143,8 +165,9 @@ router.delete('/:id', async (req, res) => {
     }
 
     // Eliminar el archivo PDF si existe (buscar en ambas ubicaciones)
-    const pdfPathNueva = path.join(__dirname, '../../diagnosticos', diagnostico.nombre);
-    const pdfPathAntigua = path.join(__dirname, '../../assets/diagnosticos', diagnostico.nombre);
+    const projectRoot = path.resolve(__dirname, '../..');
+    const pdfPathNueva = path.join(projectRoot, 'mvc', 'assets', 'diagnosticos', diagnostico.nombre);
+    const pdfPathAntigua = path.join(projectRoot, 'diagnosticos', diagnostico.nombre); // Fallback a ubicación antigua
     
     try {
       await fs.unlink(pdfPathNueva);

@@ -205,13 +205,38 @@
     // Generar y guardar PDF en el servidor
     document.getElementById("btnGuardar").addEventListener("click", async () => {
       try {
-        // TODO: Obtener el ID del usuario desde tu sistema de autenticación
-        const idUsuario = sessionStorage.getItem('userId') || 1;
+        // Obtener el ID del usuario desde localStorage
+        const usuarioData = localStorage.getItem('usuario');
+        let idUsuario = null;
         
+        if (usuarioData) {
+          try {
+            const usuario = JSON.parse(usuarioData);
+            idUsuario = usuario.id || usuario.id_usuario;
+          } catch (e) {
+            console.error('Error al parsear usuario:', e);
+          }
+        }
+        
+        // Fallback: intentar desde sessionStorage
         if (!idUsuario) {
+          idUsuario = sessionStorage.getItem('userId');
+        }
+        
+        // Validar que tenemos un ID de usuario válido
+        if (!idUsuario || idUsuario === 'null' || idUsuario === 'undefined') {
           mostrarAlerta('Error: No se pudo identificar el usuario. Por favor, inicia sesión.', 'danger');
           return;
         }
+        
+        // Asegurar que sea un número
+        idUsuario = parseInt(idUsuario, 10);
+        if (isNaN(idUsuario)) {
+          mostrarAlerta('Error: ID de usuario inválido. Por favor, inicia sesión nuevamente.', 'danger');
+          return;
+        }
+        
+        console.log('ID Usuario obtenido:', idUsuario);
 
         const btnGuardar = document.getElementById("btnGuardar");
         btnGuardar.disabled = true;
@@ -228,6 +253,7 @@
         });
 
         const result = await response.json();
+        console.log('Respuesta de /api/pdf/generate:', result);
 
         if (response.ok && result.success) {
           diagnosticoInfo = result;
@@ -244,10 +270,13 @@
           btnGuardar.style.display = 'none';
           document.getElementById('btnDescargar').style.display = 'inline-block';
         } else {
-          throw new Error(result.error || 'Error al generar el PDF');
+          const errorMsg = result.error || 'Error al generar el PDF';
+          console.error('Error en respuesta:', errorMsg);
+          throw new Error(errorMsg);
         }
       } catch (error) {
-        console.error('Error:', error);
+        console.error('❌ Error completo:', error);
+        console.error('   Stack:', error.stack);
         mostrarAlerta(`Error: ${error.message}`, 'danger');
         const btnGuardar = document.getElementById("btnGuardar");
         btnGuardar.disabled = false;
@@ -289,20 +318,36 @@
       document.getElementById("btnGuardar").style.display = 'none';
     }
 
-    // Verificar si ya existe un diagnóstico guardado
-    const diagnosticoGuardadoId = localStorage.getItem('ultimoDiagnosticoId');
-    const diagnosticoGuardadoArchivo = localStorage.getItem('ultimoDiagnosticoArchivo');
-    if (diagnosticoGuardadoId && diagnosticoGuardadoArchivo) {
+    // Verificar si ya se guardó automáticamente (tiene id_diagnostico)
+    if (iaData && iaData.id_diagnostico) {
+      console.log('✓ Diagnóstico ya guardado automáticamente con ID:', iaData.id_diagnostico);
       mostrarInfoGuardado({
-        id_diagnostico: diagnosticoGuardadoId,
-        nombre_archivo: diagnosticoGuardadoArchivo
+        id_diagnostico: iaData.id_diagnostico,
+        nombre_archivo: iaData.nombre_archivo || 'Pendiente de generar PDF'
       });
-      document.getElementById('btnGuardar').style.display = 'none';
-      document.getElementById('btnDescargar').style.display = 'inline-block';
+      document.getElementById('btnGuardar').style.display = 'inline-block';
+      document.getElementById('btnGuardar').innerHTML = '<i class="bi bi-file-earmark-pdf"></i> Generar PDF';
       diagnosticoInfo = {
-        id_diagnostico: diagnosticoGuardadoId,
-        nombre_archivo: diagnosticoGuardadoArchivo
+        id_diagnostico: iaData.id_diagnostico,
+        nombre_archivo: iaData.nombre_archivo
       };
+    }
+    // Verificar si ya existe un diagnóstico guardado en localStorage
+    else {
+      const diagnosticoGuardadoId = localStorage.getItem('ultimoDiagnosticoId');
+      const diagnosticoGuardadoArchivo = localStorage.getItem('ultimoDiagnosticoArchivo');
+      if (diagnosticoGuardadoId && diagnosticoGuardadoArchivo) {
+        mostrarInfoGuardado({
+          id_diagnostico: diagnosticoGuardadoId,
+          nombre_archivo: diagnosticoGuardadoArchivo
+        });
+        document.getElementById('btnGuardar').style.display = 'none';
+        document.getElementById('btnDescargar').style.display = 'inline-block';
+        diagnosticoInfo = {
+          id_diagnostico: diagnosticoGuardadoId,
+          nombre_archivo: diagnosticoGuardadoArchivo
+        };
+      }
     }
   </script>
 

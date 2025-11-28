@@ -20,14 +20,14 @@ app.use(express.static(path.join(__dirname, "mvc/public")));
 // Servir assets
 app.use("/assets", express.static(path.join(__dirname, "mvc/assets")));
 
-// Servir carpeta de diagnósticos
-app.use("/diagnosticos", express.static(path.join(__dirname, "diagnosticos")));
+// Servir carpeta de diagnósticos (ya está incluida en /assets)
+// app.use("/diagnosticos", express.static(path.join(__dirname, "mvc", "assets", "diagnosticos")));
 
 // Servir archivos estáticos
 app.use(express.static("."));
 
-// Crear carpeta para diagnósticos si no existe
-const diagnosticosDir = path.join(__dirname, "diagnosticos");
+// Crear carpeta para diagnósticos si no existe (en mvc/assets/diagnosticos)
+const diagnosticosDir = path.join(__dirname, "mvc", "assets", "diagnosticos");
 fs.mkdir(diagnosticosDir, { recursive: true }).catch(console.error);
 
 // ==================== FUNCIONES PARA IA ====================
@@ -72,6 +72,7 @@ app.post("/api/generate", async (req, res) => {
     const { form, id_usuario } = req.body;
     if (!form) return res.status(400).json({ error: "Falta el campo form" });
     
+    console.log('🤖 Generando diagnóstico con IA...');
     const prompt = buildPrompt(form);
     const result = await model.generateContent(prompt);
     let text = cleanJSON(result.response.text());
@@ -80,7 +81,46 @@ app.post("/api/generate", async (req, res) => {
     try {
       json = JSON.parse(text);
     } catch (err) {
+      console.error('❌ Error al parsear JSON de IA:', err);
       return res.status(200).json({ error: "JSON inválido", raw: text });
+    }
+    
+    console.log('✓ Diagnóstico generado por IA');
+    
+    // Si tenemos id_usuario, guardar automáticamente en BD
+    if (id_usuario) {
+      try {
+        const idUsuarioNum = parseInt(id_usuario, 10);
+        if (!isNaN(idUsuarioNum) && idUsuarioNum > 0) {
+          const { Diagnostico } = require("./mvc/models/modelos");
+          
+          // Generar nombre único para el PDF
+          const nombrePDF = generarNombrePDF(idUsuarioNum);
+          
+          console.log(`📝 Guardando diagnóstico automáticamente en BD:`, {
+            id_usuario: idUsuarioNum,
+            nombre: nombrePDF,
+            contactado: 1
+          });
+          
+          const id_diagnostico = await Diagnostico.create({
+            id_usuario: idUsuarioNum,
+            nombre: nombrePDF,
+            tiempo: new Date(),
+            contactado: 1
+          });
+          
+          console.log(`✓ Diagnóstico guardado automáticamente en BD con ID: ${id_diagnostico}`);
+          
+          // Agregar el ID del diagnóstico a la respuesta
+          json.id_diagnostico = id_diagnostico;
+          json.nombre_archivo = nombrePDF;
+        }
+      } catch (dbError) {
+        console.error('⚠️ Error al guardar automáticamente en BD (continuando):', dbError.message);
+        // No fallar la petición si falla el guardado automático
+        // El usuario puede guardar manualmente después
+      }
     }
     
     // Guardar globalmente para referencia temporal
@@ -91,7 +131,7 @@ app.post("/api/generate", async (req, res) => {
       message: "Diagnóstico generado exitosamente"
     });
   } catch (err) {
-    console.error("Error en /api/generate:", err);
+    console.error("❌ Error en /api/generate:", err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -163,14 +203,36 @@ app.post("/api/pdf/generate", async (req, res) => {
     let id_diagnostico = null;
     try {
       const { Diagnostico } = require("./mvc/models/modelos");
-      id_diagnostico = await Diagnostico.create({
-        id_usuario,
-        nombre: nombrePDF, // Solo guardamos el nombre del archivo
-        tiempo: new Date()
+      
+      // Validar que id_usuario sea un número válido
+      const idUsuarioNum = parseInt(id_usuario, 10);
+      if (isNaN(idUsuarioNum) || idUsuarioNum <= 0) {
+        throw new Error(`ID de usuario inválido: ${id_usuario}`);
+      }
+      
+      console.log(`📝 Intentando guardar diagnóstico en BD:`, {
+        id_usuario: idUsuarioNum,
+        nombre: nombrePDF,
+        contactado: 1
       });
-      console.log(`✓ Diagnóstico registrado en BD con ID: ${id_diagnostico}`);
+      
+      id_diagnostico = await Diagnostico.create({
+        id_usuario: idUsuarioNum,
+        nombre: nombrePDF, // Solo guardamos el nombre del archivo
+        tiempo: new Date(),
+        contactado: 1 // 1 = Pendiente, 0 = Contactado
+      });
+      
+      if (!id_diagnostico) {
+        throw new Error('No se retornó un ID del diagnóstico creado');
+      }
+      
+      console.log(`✓ Diagnóstico registrado en BD con ID: ${id_diagnostico}, contactado: 1 (Pendiente)`);
     } catch (dbError) {
-      console.error("Error al registrar en BD:", dbError);
+      console.error("❌ Error al registrar en BD:", dbError);
+      console.error("   Stack:", dbError.stack);
+      // NO continuar si falla el guardado en BD - es crítico
+      throw new Error(`Error al guardar diagnóstico en BD: ${dbError.message}`);
     }
 
     res.json({

@@ -227,12 +227,46 @@
       localStorage.setItem('catastroForm', JSON.stringify(catastroData));
 
       try {
+        // Obtener el ID del usuario ANTES de generar la IA
+        const usuarioData = localStorage.getItem('usuario');
+        let idUsuario = null;
+        
+        if (usuarioData) {
+          try {
+            const usuario = JSON.parse(usuarioData);
+            idUsuario = usuario.id || usuario.id_usuario;
+          } catch (e) {
+            console.error('Error al parsear usuario:', e);
+          }
+        }
+        
+        if (!idUsuario) {
+          idUsuario = sessionStorage.getItem('userId');
+        }
+        
+        // Validar que tenemos un ID de usuario válido
+        if (!idUsuario || idUsuario === 'null' || idUsuario === 'undefined') {
+          alert('Error: No se pudo identificar el usuario. Por favor, inicia sesión.');
+          return;
+        }
+        
+        idUsuario = parseInt(idUsuario, 10);
+        if (isNaN(idUsuario)) {
+          alert('Error: ID de usuario inválido. Por favor, inicia sesión nuevamente.');
+          return;
+        }
+        
+        console.log('ID Usuario obtenido:', idUsuario);
         console.log('Iniciando fetch a /api/generate');
+        
         // Llamada al servidor para generar IA
         const res = await fetch('/api/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ form: catastroData })
+          body: JSON.stringify({ 
+            form: catastroData,
+            id_usuario: idUsuario  // Pasar id_usuario para guardar automáticamente
+          })
         });
         console.log('Respuesta del fetch - status:', res.status);
 
