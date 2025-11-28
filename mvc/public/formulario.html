@@ -1,268 +1,198 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Catastro Automático</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-    <style>
-      :root { --brand: #2f9e44; --brand-dark: #1e7a33; --brand-light: #e9f7ef; }
-      .text-brand { color: var(--brand); }
-      .bg-brand { background-color: var(--brand); }
-      .bg-brand-light { background-color: var(--brand-light); }
-      .btn-brand { background-color: var(--brand); color: #fff; }
-      .btn-brand:hover { background-color: var(--brand-dark); color: #fff; }
-      .hero-img { max-height: 360px; object-fit: cover; }
-      .feature-icon { font-size: 2rem; color: var(--brand); }
-      .step-line { width: 3px; background: var(--brand); min-height: 24px; margin: 0 auto; }
-      .testimonial-avatar { width: 80px; height: 80px; }
-      .footer { background-color: var(--brand-dark); color: #fff; }
-      .nav-link.active { font-weight: 600; }
-      .carousel-caption { background-color: rgba(0,0,0,0.5); padding: 1rem; border-radius: 8px; }
-      .carousel-control-prev-icon, .carousel-control-next-icon { background-color: rgba(47, 158, 68, 0.8); border-radius: 50%;padding: 1rem; }
-      .modal-backdrop.show { opacity: .5; backdrop-filter: blur(2px); }
-      /* Estilo adicional para el formulario */
-      .form-section-title { border-bottom: 2px solid var(--brand); padding-bottom: 5px; margin-bottom: 1.5rem; }
-      .form-check-label { font-weight: 500; }
-    </style>
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
-      <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="/">
-          <i class="bi bi-diamond-fill text-brand me-2"></i>
-          <span class="fw-semibold">Catastro</span>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="mainNav">
-          <a class="btn btn-brand" href="/sobrenosotros" >Cerrar sesión</a>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Diagnóstico Catastral</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --brand: #2f9e44;
+      --brand-dark: #1e7a33;
+      --brand-light: #e9f7ef;
+    }
+    body {
+      background: #f5f6f5;
+    }
+    .form-section {
+      border-left: 5px solid var(--brand);
+      padding-left: 15px;
+    }
+    .btn-brand {
+      background: var(--brand);
+      color: white;
+    }
+    .btn-brand:hover {
+      background: var(--brand-dark);
+      color: white;
+    }
+    #output {
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 12px;
+      border: 1px solid #e2e2e2;
+      margin-top: 25px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="py-5">
+    <div class="container">
+
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+
+          <h1 class="text-center text-success fw-bold mb-4">Diagnóstico Catastral Automático 📊</h1>
+
+          <form id="catastroForm" class="bg-white p-4 p-md-5 shadow-lg rounded">
+
+            <h3 class="form-section text-success mb-4">Cartografía y Campo</h3>
+
+            <!-- Pregunta 1 -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">¿El municipio cuenta con mapas y ortofotos actualizadas de su territorio?</label>
+              <select id="mapas_actualizados" name="mapas_actualizados" class="form-select" required>
+                <option value="">Selecciona</option>
+                <option value="sí">Sí</option>
+                <option value="no">No</option>
+                <option value="parcial">Parcial</option>
+              </select>
+            </div>
+
+            <!-- Pregunta 2 (principal) -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">¿Cuándo fue la última vez que se actualizó la cartografía oficial?</label>
+              <input type="text" id="ultima_actualizacion_cartografia" name="ultima_actualizacion_cartografia" class="form-control">
+            </div>
+
+            <!-- Pregunta 3 -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">¿Realizan inspecciones de campo?</label>
+              <select id="inspecciones_campo" name="inspecciones_campo" class="form-select" required>
+                <option value="">Selecciona</option>
+                <option value="sí">Sí</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+
+            <!-- Preguntas 3 secundarias -->
+            <div class="mb-3" id="frecuencia_inspecciones_div" style="display:none;">
+              <label class="form-label fw-semibold">¿Con qué frecuencia?</label>
+              <input type="text" id="frecuencia_inspecciones" name="frecuencia_inspecciones" class="form-control">
+            </div>
+
+            <div class="mb-3" id="personal_inspecciones_div" style="display:none;">
+              <label class="form-label fw-semibold">¿Y con qué personal o equipo?</label>
+              <input type="text" id="personal_inspecciones" name="personal_inspecciones" class="form-control">
+            </div>
+
+            <!-- Pregunta 4 -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">¿Consideran que su padrón catastral coincide con la cartografía?</label>
+              <select id="coincide_padron" name="coincide_padron" class="form-select" required>
+                <option value="">Selecciona</option>
+                <option value="sí">Sí</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+
+            <!-- Pregunta 4 secundaria -->
+            <div class="mb-3" id="porcentaje_coincidencia_div" style="display:none;">
+              <label class="form-label fw-semibold">¿En qué porcentaje estiman esa coincidencia?</label>
+              <input type="number" id="porcentaje_coincidencia" name="porcentaje_coincidencia" class="form-control" min="0" max="100">
+            </div>
+
+            <!-- Pregunta 5 -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">¿El sistema de gestión catastral que utilizan actualmente es suficiente o buscan una plataforma más eficiente?</label>
+              <textarea id="sistema_gestion" name="sistema_gestion" class="form-control" rows="2"></textarea>
+            </div>
+
+            <!-- Pregunta 6 -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">¿La documentación del catastro se encuentra en archivo físico, digital o en ambos formatos?</label>
+              <select id="documentacion_formato" name="documentacion_formato" class="form-select" required>
+                <option value="">Selecciona</option>
+                <option value="físico">Físico</option>
+                <option value="digital">Digital</option>
+                <option value="ambos">Ambos</option>
+              </select>
+            </div>
+
+            <!-- Pregunta 7 -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">¿Cuentan con un SIG multifinalitario para compartir y consultar la información catastral en un solo lugar?</label>
+              <select id="sig_multifinalitario" name="sig_multifinalitario" class="form-select" required>
+                <option value="">Selecciona</option>
+                <option value="sí">Sí</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+
+            <!-- Pregunta 8 -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">¿Existen problemas de duplicidad, errores o datos incompletos en los registros del catastro?</label>
+              <textarea id="problemas_registros" name="problemas_registros" class="form-control" rows="2"></textarea>
+            </div>
+
+            <!-- Pregunta 9 -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">¿Cuáles son los principales problemas o limitaciones que enfrentan en la administración de la información catastral?</label>
+              <textarea id="limitaciones_admin" name="limitaciones_admin" class="form-control" rows="2"></textarea>
+            </div>
+
+            <!-- Pregunta 10 -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">¿El personal tarda mucho tiempo en localizar expedientes o documentos cuando se requieren?</label>
+              <select id="tiempo_localizar" name="tiempo_localizar" class="form-select" required>
+                <option value="">Selecciona</option>
+                <option value="sí">Sí</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+
+            <!-- BOTÓN PARA GUARDAR Y IR A Ofrecemos -->
+            <div class="text-center mt-4">
+              <button type="button" id="guardarRespuestas" class="btn btn-success btn-lg">Guardar Respuestas y Continuar</button>
+            </div>
+
+          </form>
+
         </div>
       </div>
-    </nav>
 
-    <main class="py-5 bg-light">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-10">
-            <h1 class="text-center display-5 mb-4 text-brand fw-bold">Diagnóstico Catastral Automático 📊</h1>
-            <p class="text-center lead mb-5 text-muted">Responda brevemente el siguiente cuestionario para obtener un análisis instantáneo del estado de su catastro municipal y recomendaciones personalizadas.</p>
+    </div>
+  </main>
 
-            <form class="p-4 p-md-5 bg-white rounded shadow-lg needs-validation" novalidate>
-              
-              <h3 class="text-brand form-section-title">Cartografía y Verificación de Campo</h3>
-              
-              <div class="mb-4">
-                <label for="cartografiaActualizada" class="form-label fw-semibold">1. ¿El municipio cuenta con mapas y ortofotos actualizadas de su territorio?</label>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="cartografiaActualizada" id="cartografiaSi" value="si" required>
-                  <label class="form-check-label" for="cartografiaSi">Sí</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="cartografiaActualizada" id="cartografiaNo" value="no">
-                  <label class="form-check-label" for="cartografiaNo">No</label>
-                </div>
-                <div class="invalid-feedback d-block">Seleccione una opción.</div>
-              </div>
+  <script>
+    // Mostrar/ocultar preguntas secundarias
+    document.getElementById('inspecciones_campo').addEventListener('change', function() {
+      const show = this.value === 'sí';
+      document.getElementById('frecuencia_inspecciones_div').style.display = show ? 'block' : 'none';
+      document.getElementById('personal_inspecciones_div').style.display = show ? 'block' : 'none';
+    });
 
-              <div class="mb-4">
-                <label for="ultimaActualizacion" class="form-label fw-semibold">2. ¿Cuándo fue la última vez que se actualizó la cartografía oficial?</label>
-                <input type="text" class="form-control" id="ultimaActualizacion" placeholder="Ej. Hace 3 años / 2022 / Nunca" required>
-                <div class="invalid-feedback">Este campo es requerido.</div>
-              </div>
+    document.getElementById('coincide_padron').addEventListener('change', function() {
+      document.getElementById('porcentaje_coincidencia_div').style.display = this.value === 'sí' ? 'block' : 'none';
+    });
 
-              <div class="mb-4">
-                <label for="inspeccionesCampo" class="form-label fw-semibold">3. ¿Realizan inspecciones de campo? Si sí, ¿con qué frecuencia y con qué personal o equipo?</label>
-                <textarea class="form-control" id="inspeccionesCampo" rows="3" placeholder="Ej. Sí, trimestralmente, con 2 técnicos y drones básicos. / No."></textarea>
-              </div>
-
-              <div class="mb-4">
-                <label for="coincidenciaPadron" class="form-label fw-semibold">4. ¿Consideran que su padrón catastral coincide con la cartografía? ¿En qué porcentaje estiman esa coincidencia?</label>
-                <input type="range" class="form-range" min="0" max="100" step="5" id="coincidenciaPadron" oninput="this.nextElementSibling.value=this.value+'%'" required>
-                <output class="d-block text-center mt-2 fw-bold text-brand">50%</output>
-                <div class="invalid-feedback d-block">Indique un porcentaje.</div>
-              </div>
-
-              <hr class="my-4 text-brand">
-
-              <h3 class="text-brand form-section-title">Sistemas y Gestión Documental</h3>
-
-              <div class="mb-4">
-                <label for="sistemaSuficiente" class="form-label fw-semibold">5. ¿El sistema de gestión catastral que utilizan actualmente es suficiente o buscan una plataforma más eficiente?</label>
-                <select class="form-select" id="sistemaSuficiente" required>
-                  <option value="" disabled selected>Seleccione una opción</option>
-                  <option value="suficiente">Es suficiente para nuestras necesidades</option>
-                  <option value="ineficiente">Buscamos una plataforma más eficiente</option>
-                  <option value="ninguno">No utilizamos un sistema de gestión como tal</option>
-                </select>
-                <div class="invalid-feedback">Seleccione una opción.</div>
-              </div>
-
-              <div class="mb-4">
-                <label for="documentacionFormato" class="form-label fw-semibold">6. ¿La documentación del catastro se encuentra en archivo físico, digital o en ambos formatos?</label>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" id="formatoFisico" value="Físico" name="formato">
-                  <label class="form-check-label" for="formatoFisico">Físico</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" id="formatoDigital" value="Digital" name="formato">
-                  <label class="form-check-label" for="formatoDigital">Digital</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" id="formatoAmbos" value="Ambos" name="formato">
-                  <label class="form-check-label" for="formatoAmbos">Ambos</label>
-                </div>
-              </div>
-
-              <div class="mb-4">
-                <label for="sigMultifinalitario" class="form-label fw-semibold">7. ¿Cuentan con un SIG multifinalitario para compartir y consultar la información catastral en un solo lugar?</label>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="sigMultifinalitario" id="sigSi" value="si" required>
-                  <label class="form-check-label" for="sigSi">Sí</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="sigMultifinalitario" id="sigNo" value="no">
-                  <label class="form-check-label" for="sigNo">No</label>
-                </div>
-                <div class="invalid-feedback d-block">Seleccione una opción.</div>
-              </div>
-
-              <div class="mb-4">
-                <label for="problemasRegistros" class="form-label fw-semibold">8. ¿Existen problemas de duplicidad, errores o datos incompletos en los registros del catastro?</label>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="problemasRegistros" id="registrosSi" value="si" required>
-                  <label class="form-check-label" for="registrosSi">Sí, frecuentemente</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="problemasRegistros" id="registrosPocos" value="pocos">
-                  <label class="form-check-label" for="registrosPocos">Algunos</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="problemasRegistros" id="registrosNo" value="no">
-                  <label class="form-check-label" for="registrosNo">No, son muy limpios</label>
-                </div>
-                <div class="invalid-feedback d-block">Seleccione una opción.</div>
-              </div>
-
-              <div class="mb-4">
-                <label for="principalesProblemas" class="form-label fw-semibold">9. ¿Cuáles son los principales problemas o limitaciones que enfrentan en la administración de la información catastral?</label>
-                <textarea class="form-control" id="principalesProblemas" rows="3" placeholder="Mencione los desafíos más importantes que enfrentan."></textarea>
-              </div>
-
-              <div class="mb-4">
-                <label for="tiempoLocalizacion" class="form-label fw-semibold">10. ¿El personal tarda mucho tiempo en localizar expedientes o documentos cuando se requieren?</label>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="tiempoLocalizacion" id="tiempoSi" value="si" required>
-                  <label class="form-check-label" for="tiempoSi">Sí, considerablemente</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="tiempoLocalizacion" id="tiempoAceptable" value="aceptable">
-                  <label class="form-check-label" for="tiempoAceptable">Un tiempo aceptable</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="tiempoLocalizacion" id="tiempoNo" value="no">
-                  <label class="form-check-label" for="tiempoNo">No, la localización es rápida</label>
-                </div>
-                <div class="invalid-feedback d-block">Seleccione una opción.</div>
-              </div>
-
-              <div class="d-flex gap-3 mt-4">
-                <button type="submit" class="btn btn-brand btn-lg flex-fill">Obtener mi Diagnóstico Catastral Automático</button>
-                <button type="button" class="btn btn-outline-secondary btn-lg flex-fill" id="btn-cancelar">Cancelar</button>
-              </div>
-
-            </form>
-
-          </div>
-        </div>
-      </div>
-    </main>
-
-    <footer class="footer py-4">
-      <div class="container">
-        <div class="row align-items-center g-3">
-          <div class="col-md-3 d-flex align-items-center">
-            <i class="bi bi-diamond-fill me-2"></i>
-            <span>Catastro</span>
-          </div>
-          <div class="col-md-6 text-center">
-            <small>© 2025 Catastro Automático • contacto@catastro.app • +56 9 1234 5678</small>
-          </div>
-          <div class="col-md-3 text-md-end text-center">
-            <a class="text-white me-2" href="#"><i class="bi bi-twitter-x"></i></a>
-            <a class="text-white me-2" href="#"><i class="bi bi-linkedin"></i></a>
-            <a class="text-white" href="#"><i class="bi bi-github"></i></a>
-          </div>
-        </div>
-      </div>
-    </footer>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        var params = new URLSearchParams(window.location.search);
-        if (params.has('embed') || window.top !== window.self) {
-          var navEl = document.querySelector('nav.navbar');
-          if (navEl) navEl.remove();
-          var embedModals = document.querySelectorAll('#loginModal, #registerModal');
-          embedModals.forEach(function (el) { el && el.remove(); });
-        }
-        var loginModalEl = document.getElementById('loginModal');
-        var registerModalEl = document.getElementById('registerModal');
-        if (loginModalEl && registerModalEl) {
-          var loginModal = bootstrap.Modal.getOrCreateInstance(loginModalEl);
-          var registerModal = bootstrap.Modal.getOrCreateInstance(registerModalEl);
-          var toRegisterLinks = document.querySelectorAll('.link-register');
-          toRegisterLinks.forEach(function (a) {
-            a.addEventListener('click', function (e) {
-              e.preventDefault();
-              loginModal.hide();
-              registerModal.show();
-            });
-          });
-          var toLoginLinks = document.querySelectorAll('.link-login-back');
-          toLoginLinks.forEach(function (a) {
-            a.addEventListener('click', function (e) {
-              e.preventDefault();
-              registerModal.hide();
-              loginModal.show();
-            });
-          });
-        }
-        var coincidenciaPadron = document.getElementById('coincidenciaPadron');
-        if (coincidenciaPadron) {
-            coincidenciaPadron.value = 50;
-        }
-        var diagForm = document.querySelector('main form');
-        if (diagForm) {
-          diagForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            if (!diagForm.checkValidity()) {
-              diagForm.classList.add('was-validated');
-              return;
-            }
-            if (window.top !== window.self) {
-              window.top.location.href = '/ofrecemos';
-            } else {
-              window.location.href = '/ofrecemos';
-            }
-          });
-        }
-        var cancelBtn = document.getElementById('btn-cancelar');
-        if (cancelBtn) {
-          cancelBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            if (window.top !== window.self) {
-              window.top.location.href = '/';
-            } else {
-              window.location.href = '/';
-            }
-          });
-        }
+    // Guardar respuestas en localStorage
+    document.getElementById('guardarRespuestas').addEventListener('click', () => {
+      const form = document.getElementById('catastroForm');
+      const data = {};
+      form.querySelectorAll('input, select, textarea').forEach(el => {
+        data[el.name] = el.value;
       });
-    </script>
-  </body>
+      localStorage.setItem('catastroForm', JSON.stringify(data));
+      window.location.href = '/ofrecemos.html';
+    });
+  </script>
+
+</body>
 </html>

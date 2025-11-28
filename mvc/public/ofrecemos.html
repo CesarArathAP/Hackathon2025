@@ -1,350 +1,260 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Catastro Automático</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-    <style>
-      :root { --brand: #2f9e44; --brand-dark: #1e7a33; --brand-light: #e9f7ef; }
-      .text-brand { color: var(--brand); }
-      .bg-brand { background-color: var(--brand); }
-      .bg-brand-light { background-color: var(--brand-light); }
-      .btn-brand { background-color: var(--brand); color: #fff; }
-      .btn-brand:hover { background-color: var(--brand-dark); color: #fff; }
-      /* Estilos eliminados/modificados para la nueva vista */
-      .hero-img { max-height: 360px; object-fit: cover; }
-      .feature-icon { font-size: 2rem; color: var(--brand); }
-      .step-line { width: 3px; background: var(--brand); min-height: 24px; margin: 0 auto; }
-      .testimonial-avatar { width: 80px; height: 80px; }
-      .footer { background-color: var(--brand-dark); color: #fff; }
-      .nav-link.active { font-weight: 600; }
-      .carousel-caption { background-color: rgba(0,0,0,0.5); padding: 1rem; border-radius: 8px; }
-      .carousel-control-prev-icon, .carousel-control-next-icon { background-color: rgba(47, 158, 68, 0.8); border-radius: 50%;padding: 1rem; }
-      .modal-backdrop.show { opacity: .5; backdrop-filter: blur(2px); }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Te Ofrecemos</title>
 
-      /* Nuevos estilos para la vista "TE OFRECEMOS" en tema blanco */
-      body {
-          background-color: #ffffff;
-          color: #333;
-      }
-      .offer-container {
-          max-width: 600px;
-          margin: 100px auto; /* Centrar y dar espacio */
-          padding: 20px;
-      }
-      .offer-card {
-          background-color: #ffffff;
-          border: 1px solid var(--brand);
-          border-radius: 12px;
-          padding: 15px 20px;
-          margin-bottom: 20px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          font-size: 1.2rem;
-          color: #333;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-          cursor: pointer;
-      }
-      .offer-card-title {
-          font-weight: 500;
-      }
-      .offer-card.selected {
-          background-color: var(--brand-light);
-          border-color: var(--brand-dark);
-          box-shadow: 0 0 0 3px rgba(47, 158, 68, 0.2);
-      }
-      .selected-icon {
-          color: var(--brand);
-          margin-right: 12px;
-          opacity: 0;
-          transition: opacity .2s ease-in-out;
-      }
-      .offer-card.selected .selected-icon { opacity: 1; }
-      .offer-info-icon {
-          color: var(--brand);
-          cursor: pointer;
-          font-size: 1.5rem;
-          transition: color 0.2s;
-      }
-      .offer-info-icon:hover {
-          color: var(--brand-light);
-      }
-      .text-offer-title {
-          color: var(--brand);
-          font-size: 2.5rem;
-          font-weight: 700;
-          text-align: center;
-          margin-bottom: 40px;
-      }
-    </style>
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
-      <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="/">
-          <i class="bi bi-diamond-fill text-brand me-2"></i>
-          <span class="fw-semibold">Catastro</span>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="mainNav">
-          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link" href="/contacto">Contáctenos</a></li>
-          </ul>
-          <a class="btn btn-brand" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar sesión</a>
-        </div>
-      </div>
-    </nav>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
 
-    <main class="offer-container">
+  <style>
+    :root {
+      --brand: #2f9e44;
+      --brand-light: #e8f7ef;
+      --brand-dark: #1e7a33;
+    }
 
-      <div class="offer-card" role="checkbox" tabindex="0" aria-checked="false" data-service="Mapeo">
-        <span class="offer-card-title">Mapeo</span>
-        <div class="d-flex align-items-center">
-          <i class="bi bi-check-circle-fill selected-icon"></i>
-          <i class="bi bi-info-circle offer-info-icon" data-bs-toggle="modal" data-bs-target="#serviceModal" data-service-name="Mapeo" data-service-desc="Generación y actualización de cartografía predial mediante el uso de inteligencia artificial y tecnología satelital."></i>
-        </div>
-      </div>
+    body {
+      background: white;
+      overflow-x: hidden;
+      font-family: "Segoe UI", sans-serif;
+    }
 
-      <div class="offer-card" role="checkbox" tabindex="0" aria-checked="false" data-service="Gestión">
-        <span class="offer-card-title">Gestión</span>
-        <div class="d-flex align-items-center">
-          <i class="bi bi-check-circle-fill selected-icon"></i>
-          <i class="bi bi-info-circle offer-info-icon" data-bs-toggle="modal" data-bs-target="#serviceModal" data-service-name="Gestión" data-service-desc="Herramientas para la administración eficiente de la información catastral, incluyendo flujos de trabajo y reportes personalizados."></i>
-        </div>
-      </div>
+    .offer-box {
+      background: #f1fcf6;
+      max-width: 650px;
+      margin: 120px auto;
+      border-radius: 22px;
+      padding: 40px 50px;
+      box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    }
 
-      <div class="offer-card" role="checkbox" tabindex="0" aria-checked="false" data-service="Base de datos">
-        <span class="offer-card-title">Base de datos</span>
-        <div class="d-flex align-items-center">
-          <i class="bi bi-check-circle-fill selected-icon"></i>
-          <i class="bi bi-info-circle offer-info-icon" data-bs-toggle="modal" data-bs-target="#serviceModal" data-service-name="Base de datos" data-service-desc="Diseño, implementación y mantenimiento de bases de datos robustas y seguras para almacenar toda la información catastral municipal."></i>
-        </div>
-      </div>
+    h1 {
+      text-align: center;
+      color: #1e7a33;
+      font-weight: 700;
+      margin-bottom: 25px;
+    }
 
-      <div class="offer-card" role="checkbox" tabindex="0" aria-checked="false" data-service="Visualización">
-        <span class="offer-card-title">Visualización</span>
-        <div class="d-flex align-items-center">
-          <i class="bi bi-check-circle-fill selected-icon"></i>
-          <i class="bi bi-info-circle offer-info-icon" data-bs-toggle="modal" data-bs-target="#serviceModal" data-service-name="Visualización" data-service-desc="Tableros y mapas interactivos para analizar y comunicar información territorial a distintas audiencias."></i>
-        </div>
-      </div>
+    .offer-input {
+      border: 2px solid #1e7a33;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 1.1rem;
+      text-align: center;
+      width: 100%;
+      background: white;
+      cursor: pointer;
+      transition: 0.25s;
+      user-select: none;
+    }
 
-      <div class="offer-card" role="checkbox" tabindex="0" aria-checked="false" data-service="Capacitación">
-        <span class="offer-card-title">Capacitación</span>
-        <div class="d-flex align-items-center">
-          <i class="bi bi-check-circle-fill selected-icon"></i>
-          <i class="bi bi-info-circle offer-info-icon" data-bs-toggle="modal" data-bs-target="#serviceModal" data-service-name="Capacitación" data-service-desc="Programas de formación para equipos municipales en herramientas y mejores prácticas catastrales."></i>
-        </div>
-      </div>
-      <div class="d-flex justify-content-end mt-3">
-        <button type="button" class="btn btn-brand btn-lg" id="btn-continuar" disabled>Generar diagnóstico más detallado</button>
-      </div>
-    </main>
-    <footer class="footer py-4">
-      <div class="container">
-        <div class="row align-items-center g-3">
-          <div class="col-md-3 d-flex align-items-center">
-            <i class="bi bi-diamond-fill me-2"></i>
-            <span>Catastro</span>
-          </div>
-          <div class="col-md-6 text-center">
-            <small>© 2025 Catastro Automático • contacto@catastro.app • +56 9 1234 5678</small>
-          </div>
-          <div class="col-md-3 text-md-end text-center">
-            <a class="text-white me-2" href="#"><i class="bi bi-twitter-x"></i></a>
-            <a class="text-white me-2" href="#"><i class="bi bi-linkedin"></i></a>
-            <a class="text-white" href="#"><i class="bi bi-github"></i></a>
-          </div>
-        </div>
-      </div>
-    </footer>
+    .offer-input:hover {
+      background: #e2f9ee;
+      transform: scale(1.02);
+    }
 
-    <div class="modal fade" id="serviceModal" tabindex="-1" aria-labelledby="serviceModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0">
-                <div class="modal-header bg-brand text-white border-0">
-                    <h5 class="modal-title" id="serviceModalLabel">Detalle del Servicio</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body bg-brand-light">
-                    <h4 id="serviceModalTitle" class="text-brand mb-3"></h4>
-                    <p id="serviceModalDescription" class="text-dark"></p>
-                </div>
-                <div class="modal-footer bg-brand-light border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    .selected {
+      background: #2f9e44 !important;
+      color: white !important;
+      border-color: #1e7a33;
+    }
 
-    <div class="modal fade" id="selectedModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0">
-                <div class="modal-header bg-brand text-white border-0">
-                    <h5 class="modal-title">Servicios seleccionados</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body bg-brand-light">
-                    <ul class="list-group" id="selectedList"></ul>
-                </div>
-                <div class="modal-footer bg-brand-light border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    .input-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
 
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0">
-          <div class="modal-body p-4 bg-brand-light rounded">
-            <h5 class="mb-3">Iniciar Sesión</h5>
-            <form>
-              <div class="mb-3">
-                <label for="loginEmail" class="form-label">Correo</label>
-                <input type="email" class="form-control" id="loginEmail" placeholder="nombre@ejemplo.com" required>
-              </div>
-              <div class="mb-3">
-                <label for="loginPassword" class="form-label">Contraseña</label>
-                <input type="password" class="form-control" id="loginPassword" placeholder="••••••••" required>
-              </div>
-              <button type="submit" class="btn btn-brand w-100">Iniciar Sesión</button>
-              <div class="text-center mt-2">
-                <small>¿No tienes cuenta? <a href="#" class="link-success link-register">Registrarse</a></small>
-              </div>
-            </form>
-          </div>
-        </div>
+    .info-icon {
+      font-size: 1.5rem;
+      color: #1e7a33;
+      margin-left: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .info-icon:hover {
+      transform: scale(1.2);
+    }
+
+    .info-modal-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(4px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .info-modal {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      border-radius: 18px;
+      max-width: 450px;
+      padding: 25px 30px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.15);
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .close-btn {
+      text-align: right;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #1e7a33;
+    }
+    .close-btn:hover {
+      color: #145522;
+    }
+
+    .btn-continue {
+      margin-top: 25px;
+      width: 100%;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV SUPERIOR -->
+  <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="/home.html">
+        <i class="bi bi-diamond-fill text-success me-2"></i>
+        <span class="fw-semibold">Catastro</span>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="/sobrenosotros">Sobre Nosotros</a></li>
+          <li class="nav-item"><a class="nav-link" href="/contacto">Contáctenos</a></li>
+        </ul>
+        <a class="btn btn-success" href="/login.html">Cerrar sesión</a>
       </div>
     </div>
-    <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0">
-          <div class="modal-body p-4 bg-brand-light rounded">
-            <h5 class="mb-3">Registrarse</h5>
-            <form>
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <label for="regEstado" class="form-label">Estado</label>
-                  <input type="text" class="form-control" id="regEstado" placeholder="Ej. Jalisco" required>
-                </div>
-                <div class="col-md-6">
-                  <label for="regMunicipio" class="form-label">Municipio</label>
-                  <input type="text" class="form-control" id="regMunicipio" placeholder="Ej. Guadalajara" required>
-                </div>
-                <div class="col-md-6">
-                  <label for="regNombre" class="form-label">Nombre</label>
-                  <input type="text" class="form-control" id="regNombre" placeholder="Tu nombre" required>
-                </div>
-                <div class="col-md-6">
-                  <label for="regTelefono" class="form-label">Teléfono</label>
-                  <input type="tel" class="form-control" id="regTelefono" placeholder="+52 55 1234 5678" required>
-                </div>
-                <div class="col-12">
-                  <label for="regCorreo" class="form-label">Correo</label>
-                  <input type="email" class="form-control" id="regCorreo" placeholder="nombre@ejemplo.com" required>
-                </div>
-              </div>
-              <button type="submit" class="btn btn-brand w-100 mt-3">Registrarse</button>
-              <div class="text-center mt-2">
-                <small>¿Ya tienes cuenta? <a href="#" class="link-success link-login-back">Iniciar Sesión</a></small>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+  </nav>
+
+  <!-- MODAL FLOTANTE -->
+  <div id="infoModal" class="info-modal-bg" onclick="closeModal(event)">
+    <div class="info-modal" id="modalContent">
+      <div class="close-btn" onclick="hideModal()">&times;</div>
+      <h4 id="modalTitle" class="fw-bold mb-3"></h4>
+      <p id="modalText" class="mb-2"></p>
+    </div>
+  </div>
+
+  <!-- CONTENIDO CENTRAL -->
+  <div class="offer-box">
+    <h1>TE OFRECEMOS</h1>
+
+    <!-- OPCIÓN 1 -->
+    <div class="input-row">
+      <input type="text" class="offer-input" value="Mapeo" readonly onclick="selectOption(this)">
+      <i class="bi bi-info-circle info-icon"
+         onclick="showModal('Mapeo', 'Mapeo del territorio, georreferenciación y análisis espacial detallado.')"></i>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-      // Lógica para alternar entre modales de Iniciar Sesión y Registrarse y modo embed
-      document.addEventListener('DOMContentLoaded', function () {
-        var params = new URLSearchParams(window.location.search);
-        if (params.has('embed') || window.top !== window.self) {
-          var navEl = document.querySelector('nav.navbar');
-          if (navEl) navEl.remove();
-          var embedModals = document.querySelectorAll('#loginModal, #registerModal');
-          embedModals.forEach(function (el) { el && el.remove(); });
-        }
-        var loginModalEl = document.getElementById('loginModal');
-        var registerModalEl = document.getElementById('registerModal');
-        if (!loginModalEl || !registerModalEl) return;
-        var loginModal = bootstrap.Modal.getOrCreateInstance(loginModalEl);
-        var registerModal = bootstrap.Modal.getOrCreateInstance(registerModalEl);
-        var toRegisterLinks = document.querySelectorAll('.link-register');
-        toRegisterLinks.forEach(function (a) {
-          a.addEventListener('click', function (e) {
-            e.preventDefault();
-            loginModal.hide();
-            registerModal.show();
-          });
+    <!-- OPCIÓN 2 -->
+    <div class="input-row">
+      <input type="text" class="offer-input" value="Gestión" readonly onclick="selectOption(this)">
+      <i class="bi bi-info-circle info-icon"
+         onclick="showModal('Gestión', 'Procesos de administración catastral y control documental automatizado.')"></i>
+    </div>
+
+    <!-- OPCIÓN 3 -->
+    <div class="input-row">
+      <input type="text" class="offer-input" value="Base de datos" readonly onclick="selectOption(this)">
+      <i class="bi bi-info-circle info-icon"
+         onclick="showModal('Base de datos', 'Modelado, almacenamiento seguro y consultas optimizadas de datos catastrales.')"></i>
+    </div>
+
+    <!-- BOTÓN PARA GUARDAR -->
+    <button class="btn btn-success btn-continue" id="guardarOpcion">Guardar y Ver Resultado</button>
+  </div>
+
+  <script>
+    // Selección
+    function selectOption(el) {
+      document.querySelectorAll(".offer-input").forEach(i => i.classList.remove("selected"));
+      el.classList.add("selected");
+    }
+
+    // Modal
+    function showModal(title, text) {
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("modalText").textContent = text;
+      document.getElementById("infoModal").style.display = "flex";
+    }
+    function hideModal() {
+      document.getElementById("infoModal").style.display = "none";
+    }
+    function closeModal(e) {
+      if (e.target.id === "infoModal") hideModal();
+    }
+
+    // Guardar opción seleccionada y llamar a IA
+    document.getElementById('guardarOpcion').addEventListener('click', async () => {
+      console.log('Botón guardarOpcion clickeado');
+      const selected = document.querySelector(".offer-input.selected");
+      if (!selected) {
+        alert("Por favor selecciona una opción antes de continuar.");
+        return;
+      }
+      console.log('Opción seleccionada:', selected.value);
+
+      // Recuperar las respuestas previas del formulario
+      const catastroData = JSON.parse(localStorage.getItem('catastroForm')) || {};
+      catastroData.opcion_ofrecemos = selected.value;
+      console.log('Datos del formulario:', catastroData);
+
+      // Guardar temporalmente
+      localStorage.setItem('catastroForm', JSON.stringify(catastroData));
+
+      try {
+        console.log('Iniciando fetch a /api/generate');
+        // Llamada al servidor para generar IA
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ form: catastroData })
         });
-        var toLoginLinks = document.querySelectorAll('.link-login-back');
-        toLoginLinks.forEach(function (a) {
-          a.addEventListener('click', function (e) {
-            e.preventDefault();
-            registerModal.hide();
-            loginModal.show();
-          });
-        });
+        console.log('Respuesta del fetch - status:', res.status);
 
-        // Lógica para el Modal de Servicios (Nuevo)
-        var serviceModalEl = document.getElementById('serviceModal');
-        if (serviceModalEl) {
-            serviceModalEl.addEventListener('show.bs.modal', function (event) {
-                var button = event.relatedTarget;
-                var serviceName = button.getAttribute('data-service-name');
-                var serviceDesc = button.getAttribute('data-service-desc');
-                var modalTitle = serviceModalEl.querySelector('#serviceModalTitle');
-                var modalDescription = serviceModalEl.querySelector('#serviceModalDescription');
-                modalTitle.textContent = serviceName;
-                modalDescription.textContent = serviceDesc;
-            });
-        }
+        const data = await res.json();
+        console.log('Datos recibidos:', data);
 
-        var continuarBtn = document.getElementById('btn-continuar');
-        var selectedModalEl = document.getElementById('selectedModal');
-        var selectedModal = selectedModalEl ? bootstrap.Modal.getOrCreateInstance(selectedModalEl) : null;
-        var selectedListEl = document.getElementById('selectedList');
-        function updateContinueBtn() {
-          var count = document.querySelectorAll('.offer-card.selected').length;
-          if (continuarBtn) {
-            continuarBtn.disabled = count === 0;
-            continuarBtn.textContent = count > 0 ? ('Generar diagnóstico más detallado (' + count + ')') : 'Generar diagnóstico más detallado';
-          }
+        if (data.diagnostico) {
+          // Guardar respuesta de IA
+          localStorage.setItem('catastroIA', JSON.stringify(data.diagnostico));
+          console.log('Redirigiendo a /resultado.html');
+          // Redirigir a resultado
+          window.location.href = '/resultado.html';
+        } else {
+          console.log('No hay diagnostico en data');
+          alert('Error al generar IA: ' + (data.error || 'Respuesta vacía'));
         }
-        document.querySelectorAll('.offer-card').forEach(function (card) {
-          card.addEventListener('click', function (e) {
-            if (e.target && e.target.closest('.offer-info-icon')) return;
-            card.classList.toggle('selected');
-            var checked = card.classList.contains('selected');
-            card.setAttribute('aria-checked', checked ? 'true' : 'false');
-            updateContinueBtn();
-          });
-          card.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
-          });
-        });
-        if (continuarBtn && selectedModal && selectedListEl) {
-          continuarBtn.addEventListener('click', function () {
-            var selected = Array.from(document.querySelectorAll('.offer-card.selected')).map(function (c) { return c.getAttribute('data-service'); });
-            selectedListEl.innerHTML = '';
-            selected.forEach(function (name) {
-              var li = document.createElement('li');
-              li.className = 'list-group-item d-flex align-items-center';
-              li.innerHTML = '<i class="bi bi-check2-circle text-brand me-2"></i>' + name;
-              selectedListEl.appendChild(li);
-            });
-            selectedModal.show();
-          });
-        }
-        updateContinueBtn();
-      });
-    </script>
-  </body>
+      } catch (err) {
+        console.log('Error en catch:', err.message);
+        alert('Error de conexión con el servidor: ' + err.message);
+      }
+    });
+  </script>
+
+</body>
 </html>
