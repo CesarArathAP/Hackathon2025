@@ -16,7 +16,39 @@ document.addEventListener('DOMContentLoaded', function () {
     if (loginForm) {
       loginForm.addEventListener('submit', function (e) {
         e.preventDefault();
-        window.location.href = '/formulario';
+        const formData = new FormData(loginForm);
+        const email = formData.get('email');
+        const password = formData.get('password');
+        fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        })
+        .then(response => {
+          if (!response.ok) {
+            return response.json().then(data => {
+              alert(data.error || 'Login failed');
+              throw new Error('Login failed');
+            });
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            if (data.usuario.rol === 'admin') {
+              window.location.href = '/dashboard.html';
+            } else {
+              window.location.href = '/formulario';
+            }
+          } else {
+            alert(data.message || 'Login failed');
+          }
+        })
+        .catch(error => {
+          alert('An error occurred: ' + error.message);
+        });
       });
     }
     var registerForm = registerModalEl.querySelector('form');
