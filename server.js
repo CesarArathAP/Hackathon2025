@@ -27,8 +27,9 @@ app.use("/assets", express.static(path.join(__dirname, "mvc/assets")));
 app.use(express.static("."));
 
 // Crear carpeta para diagnósticos si no existe (en mvc/assets/diagnosticos)
-const diagnosticosDir = path.join(__dirname, "mvc", "assets", "diagnosticos");
+const diagnosticosDir = path.resolve(__dirname, "mvc", "assets", "diagnosticos");
 fs.mkdir(diagnosticosDir, { recursive: true }).catch(console.error);
+console.log(`📁 Ruta de diagnósticos configurada: ${diagnosticosDir}`);
 
 // ==================== FUNCIONES PARA IA ====================
 // Inicializar modelo de IA
@@ -149,7 +150,8 @@ app.post("/api/pdf/generate", async (req, res) => {
 
     // Generar nombre único para el PDF
     const nombrePDF = generarNombrePDF(id_usuario);
-    const rutaPDF = path.join(diagnosticosDir, nombrePDF);
+    const rutaPDF = path.resolve(diagnosticosDir, nombrePDF);
+    console.log(`📄 Guardando PDF en: ${rutaPDF}`);
 
     // Crear el PDF
     const doc = new PDFDocument({ margin: 50 });
@@ -253,7 +255,7 @@ app.post("/api/pdf/generate", async (req, res) => {
 app.get("/api/pdf/download/:nombreArchivo", async (req, res) => {
   try {
     const { nombreArchivo } = req.params;
-    const rutaPDF = path.join(diagnosticosDir, nombreArchivo);
+    const rutaPDF = path.resolve(diagnosticosDir, nombreArchivo);
 
     // Verificar si existe
     try {
