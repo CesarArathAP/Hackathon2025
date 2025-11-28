@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Catastro Automático</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+      :root { --brand: #2f9e44; --brand-dark: #1e7a33; --brand-light: #e9f7ef; }
+      .text-brand { color: var(--brand); }
+      .bg-brand { background-color: var(--brand); }
+      .bg-brand-light { background-color: var(--brand-light); }
+      .btn-brand { background-color: var(--brand); color: #fff; }
+      .btn-brand:hover { background-color: var(--brand-dark); color: #fff; }
+      /* Estilos eliminados/modificados para la nueva vista */
+      .hero-img { max-height: 360px; object-fit: cover; }
+      .feature-icon { font-size: 2rem; color: var(--brand); }
+      .step-line { width: 3px; background: var(--brand); min-height: 24px; margin: 0 auto; }
+      .testimonial-avatar { width: 80px; height: 80px; }
+      .footer { background-color: var(--brand-dark); color: #fff; }
+      .nav-link.active { font-weight: 600; }
+      .carousel-caption { background-color: rgba(0,0,0,0.5); padding: 1rem; border-radius: 8px; }
+      .carousel-control-prev-icon, .carousel-control-next-icon { background-color: rgba(47, 158, 68, 0.8); border-radius: 50%;padding: 1rem; }
+      .modal-backdrop.show { opacity: .5; backdrop-filter: blur(2px); }
+
+      /* Nuevos estilos para la vista "TE OFRECEMOS" en tema blanco */
+      body {
+          background-color: #ffffff;
+          color: #333;
+      }
+      .offer-container {
+          max-width: 600px;
+          margin: 100px auto; /* Centrar y dar espacio */
+          padding: 20px;
+      }
+      .offer-card {
+          background-color: #ffffff;
+          border: 1px solid var(--brand);
+          border-radius: 12px;
+          padding: 15px 20px;
+          margin-bottom: 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 1.2rem;
+          color: #333;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      }
+      .offer-card-title {
+          font-weight: 500;
+      }
+      .offer-info-icon {
+          color: var(--brand);
+          cursor: pointer;
+          font-size: 1.5rem;
+          transition: color 0.2s;
+      }
+      .offer-info-icon:hover {
+          color: var(--brand-light);
+      }
+      .offer-desc { margin: 8px 0 0; font-size: 0.95rem; color: #555; }
+      .offer-more { font-weight: 600; }
+      .text-offer-title {
+          color: var(--brand);
+          font-size: 2.5rem;
+          font-weight: 700;
+          text-align: center;
+          margin-bottom: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="/">
+          <i class="bi bi-diamond-fill text-brand me-2"></i>
+          <span class="fw-semibold">Catastro</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
+            <li class="nav-item"><a class="nav-link" href="/sobrenosotros">Sobre Nosotros</a></li>
+            <li class="nav-item"><a class="nav-link" href="/contacto">Contáctenos</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <main class="offer-container">
+      <h1 class="text-offer-title">TE OFRECEMOS</h1>
+
+      <div class="offer-card">
+        <div class="flex-grow-1">
+          <span class="offer-card-title">Mapeo</span>
+          <p class="offer-desc">Generación y actualización de cartografía predial mediante el uso de inteligencia artificial y tecnología satelital.</p>
+        </div>
+        <span class="offer-more text-brand">Ver más</span>
+      </div>
+
+      <div class="offer-card">
+        <div class="flex-grow-1">
+          <span class="offer-card-title">Gestión</span>
+          <p class="offer-desc">Herramientas para la administración eficiente de la información catastral, incluyendo flujos de trabajo y reportes personalizados.</p>
+        </div>
+        <span class="offer-more text-brand">Ver más</span>
+      </div>
+
+      <div class="offer-card">
+        <div class="flex-grow-1">
+          <span class="offer-card-title">Base de datos</span>
+          <p class="offer-desc">Diseño, implementación y mantenimiento de bases de datos robustas y seguras para almacenar toda la información catastral municipal.</p>
+        </div>
+        <span class="offer-more text-brand">Ver más</span>
+      </div>
+    </main>
+    <footer class="footer py-4">
+      <div class="container">
+        <div class="row align-items-center g-3">
+          <div class="col-md-3 d-flex align-items-center">
+            <i class="bi bi-diamond-fill me-2"></i>
+            <span>Catastro</span>
+          </div>
+          <div class="col-md-6 text-center">
+            <small>© 2025 Catastro Automático • contacto@catastro.app • +56 9 1234 5678</small>
+          </div>
+          <div class="col-md-3 text-md-end text-center">
+            <a class="text-white me-2" href="#"><i class="bi bi-twitter-x"></i></a>
+            <a class="text-white me-2" href="#"><i class="bi bi-linkedin"></i></a>
+            <a class="text-white" href="#"><i class="bi bi-github"></i></a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    
+
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+          <div class="modal-body p-4 bg-brand-light rounded">
+            <h5 class="mb-3">Iniciar Sesión</h5>
+            <form>
+              <div class="mb-3">
+                <label for="loginEmail" class="form-label">Correo</label>
+                <input type="email" class="form-control" id="loginEmail" placeholder="nombre@ejemplo.com" required>
+              </div>
+              <div class="mb-3">
+                <label for="loginPassword" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="loginPassword" placeholder="••••••••" required>
+              </div>
+              <button type="submit" class="btn btn-brand w-100">Iniciar Sesión</button>
+              <div class="text-center mt-2">
+                <small>¿No tienes cuenta? <a href="#" class="link-success link-register">Registrarse</a></small>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+          <div class="modal-body p-4 bg-brand-light rounded">
+            <h5 class="mb-3">Registrarse</h5>
+            <form>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="regEstado" class="form-label">Estado</label>
+                  <input type="text" class="form-control" id="regEstado" placeholder="Ej. Jalisco" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="regMunicipio" class="form-label">Municipio</label>
+                  <input type="text" class="form-control" id="regMunicipio" placeholder="Ej. Guadalajara" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="regNombre" class="form-label">Nombre</label>
+                  <input type="text" class="form-control" id="regNombre" placeholder="Tu nombre" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="regTelefono" class="form-label">Teléfono</label>
+                  <input type="tel" class="form-control" id="regTelefono" placeholder="+52 55 1234 5678" required>
+                </div>
+                <div class="col-12">
+                  <label for="regCorreo" class="form-label">Correo</label>
+                  <input type="email" class="form-control" id="regCorreo" placeholder="nombre@ejemplo.com" required>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-brand w-100 mt-3">Registrarse</button>
+              <div class="text-center mt-2">
+                <small>¿Ya tienes cuenta? <a href="#" class="link-success link-login-back">Iniciar Sesión</a></small>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Modo embed
+      document.addEventListener('DOMContentLoaded', function () {
+        var params = new URLSearchParams(window.location.search);
+        if (params.has('embed')) {
+          var navEl = document.querySelector('nav.navbar');
+          if (navEl) navEl.remove();
+          var embedModals = document.querySelectorAll('#loginModal, #registerModal');
+          embedModals.forEach(function (el) { el && el.remove(); });
+        }
+      });
+    </script>
+  </body>
+</html>

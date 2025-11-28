@@ -37,6 +37,11 @@ app.get("/formulario", (req, res) => {
   res.sendFile(path.join(__dirname, "mvc/public/master.html"));
 });
 
+// Página Ofrecemos
+app.get("/ofrecemos", (req, res) => {
+  res.sendFile(path.join(__dirname, "mvc/public/master.html"));
+});
+
 // Servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
