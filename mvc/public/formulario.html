@@ -38,11 +38,6 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="mainNav">
-          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
-            <li class="nav-item"><a class="nav-link" href="/sobrenosotros">Sobre Nosotros</a></li>
-            <li class="nav-item"><a class="nav-link" href="/contacto">Contáctenos</a></li>
-          </ul>
           <a class="btn btn-brand" href="/sobrenosotros" >Cerrar sesión</a>
         </div>
       </div>
@@ -55,7 +50,7 @@
             <h1 class="text-center display-5 mb-4 text-brand fw-bold">Diagnóstico Catastral Automático 📊</h1>
             <p class="text-center lead mb-5 text-muted">Responda brevemente el siguiente cuestionario para obtener un análisis instantáneo del estado de su catastro municipal y recomendaciones personalizadas.</p>
 
-            <form class="p-4 p-md-5 bg-white rounded shadow-lg">
+            <form class="p-4 p-md-5 bg-white rounded shadow-lg needs-validation" novalidate>
               
               <h3 class="text-brand form-section-title">Cartografía y Verificación de Campo</h3>
               
@@ -69,11 +64,13 @@
                   <input class="form-check-input" type="radio" name="cartografiaActualizada" id="cartografiaNo" value="no">
                   <label class="form-check-label" for="cartografiaNo">No</label>
                 </div>
+                <div class="invalid-feedback d-block">Seleccione una opción.</div>
               </div>
 
               <div class="mb-4">
                 <label for="ultimaActualizacion" class="form-label fw-semibold">2. ¿Cuándo fue la última vez que se actualizó la cartografía oficial?</label>
                 <input type="text" class="form-control" id="ultimaActualizacion" placeholder="Ej. Hace 3 años / 2022 / Nunca" required>
+                <div class="invalid-feedback">Este campo es requerido.</div>
               </div>
 
               <div class="mb-4">
@@ -85,6 +82,7 @@
                 <label for="coincidenciaPadron" class="form-label fw-semibold">4. ¿Consideran que su padrón catastral coincide con la cartografía? ¿En qué porcentaje estiman esa coincidencia?</label>
                 <input type="range" class="form-range" min="0" max="100" step="5" id="coincidenciaPadron" oninput="this.nextElementSibling.value=this.value+'%'" required>
                 <output class="d-block text-center mt-2 fw-bold text-brand">50%</output>
+                <div class="invalid-feedback d-block">Indique un porcentaje.</div>
               </div>
 
               <hr class="my-4 text-brand">
@@ -99,6 +97,7 @@
                   <option value="ineficiente">Buscamos una plataforma más eficiente</option>
                   <option value="ninguno">No utilizamos un sistema de gestión como tal</option>
                 </select>
+                <div class="invalid-feedback">Seleccione una opción.</div>
               </div>
 
               <div class="mb-4">
@@ -127,6 +126,7 @@
                   <input class="form-check-input" type="radio" name="sigMultifinalitario" id="sigNo" value="no">
                   <label class="form-check-label" for="sigNo">No</label>
                 </div>
+                <div class="invalid-feedback d-block">Seleccione una opción.</div>
               </div>
 
               <div class="mb-4">
@@ -143,6 +143,7 @@
                   <input class="form-check-input" type="radio" name="problemasRegistros" id="registrosNo" value="no">
                   <label class="form-check-label" for="registrosNo">No, son muy limpios</label>
                 </div>
+                <div class="invalid-feedback d-block">Seleccione una opción.</div>
               </div>
 
               <div class="mb-4">
@@ -164,9 +165,13 @@
                   <input class="form-check-input" type="radio" name="tiempoLocalizacion" id="tiempoNo" value="no">
                   <label class="form-check-label" for="tiempoNo">No, la localización es rápida</label>
                 </div>
+                <div class="invalid-feedback d-block">Seleccione una opción.</div>
               </div>
 
-              <button type="submit" class="btn btn-brand btn-lg w-100 mt-4">Obtener mi Diagnóstico Catastral Automático</button>
+              <div class="d-flex gap-3 mt-4">
+                <button type="submit" class="btn btn-brand btn-lg flex-fill">Obtener mi Diagnóstico Catastral Automático</button>
+                <button type="button" class="btn btn-outline-secondary btn-lg flex-fill" id="btn-cancelar">Cancelar</button>
+              </div>
 
             </form>
 
@@ -193,73 +198,13 @@
         </div>
       </div>
     </footer>
-    
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0">
-          <div class="modal-body p-4 bg-brand-light rounded">
-            <h5 class="mb-3">Iniciar Sesión</h5>
-            <form>
-              <div class="mb-3">
-                <label for="loginEmail" class="form-label">Correo</label>
-                <input type="email" class="form-control" id="loginEmail" placeholder="nombre@ejemplo.com" required>
-              </div>
-              <div class="mb-3">
-                <label for="loginPassword" class="form-label">Contraseña</label>
-                <input type="password" class="form-control" id="loginPassword" placeholder="••••••••" required>
-              </div>
-              <button type="submit" class="btn btn-brand w-100">Iniciar Sesión</button>
-              <div class="text-center mt-2">
-                <small>¿No tienes cuenta? <a href="#" class="link-success link-register">Registrarse</a></small>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0">
-          <div class="modal-body p-4 bg-brand-light rounded">
-            <h5 class="mb-3">Registrarse</h5>
-            <form>
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <label for="regEstado" class="form-label">Estado</label>
-                  <input type="text" class="form-control" id="regEstado" placeholder="Ej. Jalisco" required>
-                </div>
-                <div class="col-md-6">
-                  <label for="regMunicipio" class="form-label">Municipio</label>
-                  <input type="text" class="form-control" id="regMunicipio" placeholder="Ej. Guadalajara" required>
-                </div>
-                <div class="col-md-6">
-                  <label for="regNombre" class="form-label">Nombre</label>
-                  <input type="text" class="form-control" id="regNombre" placeholder="Tu nombre" required>
-                </div>
-                <div class="col-md-6">
-                  <label for="regTelefono" class="form-label">Teléfono</label>
-                  <input type="tel" class="form-control" id="regTelefono" placeholder="+52 55 1234 5678" required>
-                </div>
-                <div class="col-12">
-                  <label for="regCorreo" class="form-label">Correo</label>
-                  <input type="email" class="form-control" id="regCorreo" placeholder="nombre@ejemplo.com" required>
-                </div>
-              </div>
-              <button type="submit" class="btn btn-brand w-100 mt-3">Registrarse</button>
-              <div class="text-center mt-2">
-                <small>¿Ya tienes cuenta? <a href="#" class="link-success link-login-back">Iniciar Sesión</a></small>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         var params = new URLSearchParams(window.location.search);
-        if (params.has('embed')) {
+        if (params.has('embed') || window.top !== window.self) {
           var navEl = document.querySelector('nav.navbar');
           if (navEl) navEl.remove();
           var embedModals = document.querySelectorAll('#loginModal, #registerModal');
@@ -290,6 +235,32 @@
         var coincidenciaPadron = document.getElementById('coincidenciaPadron');
         if (coincidenciaPadron) {
             coincidenciaPadron.value = 50;
+        }
+        var diagForm = document.querySelector('main form');
+        if (diagForm) {
+          diagForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!diagForm.checkValidity()) {
+              diagForm.classList.add('was-validated');
+              return;
+            }
+            if (window.top !== window.self) {
+              window.top.location.href = '/ofrecemos';
+            } else {
+              window.location.href = '/ofrecemos';
+            }
+          });
+        }
+        var cancelBtn = document.getElementById('btn-cancelar');
+        if (cancelBtn) {
+          cancelBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (window.top !== window.self) {
+              window.top.location.href = '/';
+            } else {
+              window.location.href = '/';
+            }
+          });
         }
       });
     </script>

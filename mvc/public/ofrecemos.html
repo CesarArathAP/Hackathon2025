@@ -46,10 +46,23 @@
           font-size: 1.2rem;
           color: #333;
           box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+          cursor: pointer;
       }
       .offer-card-title {
           font-weight: 500;
       }
+      .offer-card.selected {
+          background-color: var(--brand-light);
+          border-color: var(--brand-dark);
+          box-shadow: 0 0 0 3px rgba(47, 158, 68, 0.2);
+      }
+      .selected-icon {
+          color: var(--brand);
+          margin-right: 12px;
+          opacity: 0;
+          transition: opacity .2s ease-in-out;
+      }
+      .offer-card.selected .selected-icon { opacity: 1; }
       .offer-info-icon {
           color: var(--brand);
           cursor: pointer;
@@ -80,8 +93,6 @@
         </button>
         <div class="collapse navbar-collapse" id="mainNav">
           <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
-            <li class="nav-item"><a class="nav-link" href="/sobrenosotros">Sobre Nosotros</a></li>
             <li class="nav-item"><a class="nav-link" href="/contacto">Contáctenos</a></li>
           </ul>
           <a class="btn btn-brand" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar sesión</a>
@@ -91,19 +102,47 @@
 
     <main class="offer-container">
 
-      <div class="offer-card">
+      <div class="offer-card" role="checkbox" tabindex="0" aria-checked="false" data-service="Mapeo">
         <span class="offer-card-title">Mapeo</span>
-        <i class="bi bi-info-circle offer-info-icon" data-bs-toggle="modal" data-bs-target="#serviceModal" data-service-name="Mapeo" data-service-desc="Generación y actualización de cartografía predial mediante el uso de inteligencia artificial y tecnología satelital."></i>
+        <div class="d-flex align-items-center">
+          <i class="bi bi-check-circle-fill selected-icon"></i>
+          <i class="bi bi-info-circle offer-info-icon" data-bs-toggle="modal" data-bs-target="#serviceModal" data-service-name="Mapeo" data-service-desc="Generación y actualización de cartografía predial mediante el uso de inteligencia artificial y tecnología satelital."></i>
+        </div>
       </div>
 
-      <div class="offer-card">
+      <div class="offer-card" role="checkbox" tabindex="0" aria-checked="false" data-service="Gestión">
         <span class="offer-card-title">Gestión</span>
-        <i class="bi bi-info-circle offer-info-icon" data-bs-toggle="modal" data-bs-target="#serviceModal" data-service-name="Gestión" data-service-desc="Herramientas para la administración eficiente de la información catastral, incluyendo flujos de trabajo y reportes personalizados."></i>
+        <div class="d-flex align-items-center">
+          <i class="bi bi-check-circle-fill selected-icon"></i>
+          <i class="bi bi-info-circle offer-info-icon" data-bs-toggle="modal" data-bs-target="#serviceModal" data-service-name="Gestión" data-service-desc="Herramientas para la administración eficiente de la información catastral, incluyendo flujos de trabajo y reportes personalizados."></i>
+        </div>
       </div>
 
-      <div class="offer-card">
+      <div class="offer-card" role="checkbox" tabindex="0" aria-checked="false" data-service="Base de datos">
         <span class="offer-card-title">Base de datos</span>
-        <i class="bi bi-info-circle offer-info-icon" data-bs-toggle="modal" data-bs-target="#serviceModal" data-service-name="Base de datos" data-service-desc="Diseño, implementación y mantenimiento de bases de datos robustas y seguras para almacenar toda la información catastral municipal."></i>
+        <div class="d-flex align-items-center">
+          <i class="bi bi-check-circle-fill selected-icon"></i>
+          <i class="bi bi-info-circle offer-info-icon" data-bs-toggle="modal" data-bs-target="#serviceModal" data-service-name="Base de datos" data-service-desc="Diseño, implementación y mantenimiento de bases de datos robustas y seguras para almacenar toda la información catastral municipal."></i>
+        </div>
+      </div>
+
+      <div class="offer-card" role="checkbox" tabindex="0" aria-checked="false" data-service="Visualización">
+        <span class="offer-card-title">Visualización</span>
+        <div class="d-flex align-items-center">
+          <i class="bi bi-check-circle-fill selected-icon"></i>
+          <i class="bi bi-info-circle offer-info-icon" data-bs-toggle="modal" data-bs-target="#serviceModal" data-service-name="Visualización" data-service-desc="Tableros y mapas interactivos para analizar y comunicar información territorial a distintas audiencias."></i>
+        </div>
+      </div>
+
+      <div class="offer-card" role="checkbox" tabindex="0" aria-checked="false" data-service="Capacitación">
+        <span class="offer-card-title">Capacitación</span>
+        <div class="d-flex align-items-center">
+          <i class="bi bi-check-circle-fill selected-icon"></i>
+          <i class="bi bi-info-circle offer-info-icon" data-bs-toggle="modal" data-bs-target="#serviceModal" data-service-name="Capacitación" data-service-desc="Programas de formación para equipos municipales en herramientas y mejores prácticas catastrales."></i>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end mt-3">
+        <button type="button" class="btn btn-brand btn-lg" id="btn-continuar" disabled>Generar diagnóstico más detallado</button>
       </div>
     </main>
     <footer class="footer py-4">
@@ -135,6 +174,23 @@
                 <div class="modal-body bg-brand-light">
                     <h4 id="serviceModalTitle" class="text-brand mb-3"></h4>
                     <p id="serviceModalDescription" class="text-dark"></p>
+                </div>
+                <div class="modal-footer bg-brand-light border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="selectedModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0">
+                <div class="modal-header bg-brand text-white border-0">
+                    <h5 class="modal-title">Servicios seleccionados</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body bg-brand-light">
+                    <ul class="list-group" id="selectedList"></ul>
                 </div>
                 <div class="modal-footer bg-brand-light border-0">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -209,7 +265,7 @@
       // Lógica para alternar entre modales de Iniciar Sesión y Registrarse y modo embed
       document.addEventListener('DOMContentLoaded', function () {
         var params = new URLSearchParams(window.location.search);
-        if (params.has('embed')) {
+        if (params.has('embed') || window.top !== window.self) {
           var navEl = document.querySelector('nav.navbar');
           if (navEl) navEl.remove();
           var embedModals = document.querySelectorAll('#loginModal, #registerModal');
@@ -241,20 +297,53 @@
         var serviceModalEl = document.getElementById('serviceModal');
         if (serviceModalEl) {
             serviceModalEl.addEventListener('show.bs.modal', function (event) {
-                // Botón que disparó el modal
                 var button = event.relatedTarget;
-                // Extraer información de los atributos data-*
                 var serviceName = button.getAttribute('data-service-name');
                 var serviceDesc = button.getAttribute('data-service-desc');
-
-                // Actualizar el contenido del modal
                 var modalTitle = serviceModalEl.querySelector('#serviceModalTitle');
                 var modalDescription = serviceModalEl.querySelector('#serviceModalDescription');
-
                 modalTitle.textContent = serviceName;
                 modalDescription.textContent = serviceDesc;
             });
         }
+
+        var continuarBtn = document.getElementById('btn-continuar');
+        var selectedModalEl = document.getElementById('selectedModal');
+        var selectedModal = selectedModalEl ? bootstrap.Modal.getOrCreateInstance(selectedModalEl) : null;
+        var selectedListEl = document.getElementById('selectedList');
+        function updateContinueBtn() {
+          var count = document.querySelectorAll('.offer-card.selected').length;
+          if (continuarBtn) {
+            continuarBtn.disabled = count === 0;
+            continuarBtn.textContent = count > 0 ? ('Generar diagnóstico más detallado (' + count + ')') : 'Generar diagnóstico más detallado';
+          }
+        }
+        document.querySelectorAll('.offer-card').forEach(function (card) {
+          card.addEventListener('click', function (e) {
+            if (e.target && e.target.closest('.offer-info-icon')) return;
+            card.classList.toggle('selected');
+            var checked = card.classList.contains('selected');
+            card.setAttribute('aria-checked', checked ? 'true' : 'false');
+            updateContinueBtn();
+          });
+          card.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+          });
+        });
+        if (continuarBtn && selectedModal && selectedListEl) {
+          continuarBtn.addEventListener('click', function () {
+            var selected = Array.from(document.querySelectorAll('.offer-card.selected')).map(function (c) { return c.getAttribute('data-service'); });
+            selectedListEl.innerHTML = '';
+            selected.forEach(function (name) {
+              var li = document.createElement('li');
+              li.className = 'list-group-item d-flex align-items-center';
+              li.innerHTML = '<i class="bi bi-check2-circle text-brand me-2"></i>' + name;
+              selectedListEl.appendChild(li);
+            });
+            selectedModal.show();
+          });
+        }
+        updateContinueBtn();
       });
     </script>
   </body>

@@ -30,7 +30,7 @@
             <li class="nav-item"><a class="nav-link" id="link-contacto" href="/contacto">Contáctenos</a></li>
             <li class="nav-item d-none"><a class="nav-link" id="link-formulario" href="/formulario">Formulario</a></li>
           </ul>
-          <a class="btn btn-brand" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar sesión</a>
+          <a class="btn btn-brand" id="cta-btn" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar sesión</a>
         </div>
       </div>
     </nav>
@@ -107,22 +107,22 @@
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         var frame = document.getElementById('app-frame');
+        var linkInicio = document.getElementById('link-inicio');
         var linkSobre = document.getElementById('link-sobre');
         var linkContacto = document.getElementById('link-contacto');
-        var linkOfrecemos = document.getElementById('link-ofrecemos');
         var linkFormulario = document.getElementById('link-formulario');
-        [linkSobre, linkContacto, linkOfrecemos, linkFormulario].forEach(function (a) {
+        [linkInicio, linkSobre, linkContacto, linkFormulario].forEach(function (a) {
           a && a.addEventListener('click', function (e) {
             e.preventDefault();
-            if (a.id === 'link-sobre') {
+            if (a.id === 'link-inicio') {
+              frame.src = '/index.html?embed=1';
+              history.pushState(null, '', '/');
+            } else if (a.id === 'link-sobre') {
               frame.src = '/sobrenosotros.html?embed=1';
               history.pushState(null, '', '/sobrenosotros');
             } else if (a.id === 'link-contacto') {
               frame.src = '/contacto.html?embed=1';
               history.pushState(null, '', '/contacto');
-            } else if (a.id === 'link-ofrecemos') {
-              frame.src = '/ofrecemos.html?embed=1';
-              history.pushState(null, '', '/ofrecemos');
             } else if (a.id === 'link-formulario') {
               frame.src = '/formulario.html?embed=1';
               history.pushState(null, '', '/formulario');
@@ -130,27 +130,65 @@
               frame.src = '/index.html?embed=1';
               history.pushState(null, '', '/');
             }
+            updateCtaForPath(window.location.pathname);
+            updateNavLinksForPath(window.location.pathname);
           });
         });
+        function updateCtaForPath(p) {
+          var cta = document.getElementById('cta-btn');
+          if (!cta) return;
+          var clone = cta.cloneNode(true);
+          cta.parentNode.replaceChild(clone, cta);
+          cta = document.getElementById('cta-btn');
+          if (p === '/formulario' || p === '/ofrecemos') {
+            cta.textContent = 'Cerrar sesión';
+            cta.removeAttribute('data-bs-toggle');
+            cta.removeAttribute('data-bs-target');
+            cta.addEventListener('click', function (e) {
+              e.preventDefault();
+              frame.src = '/index.html?embed=1';
+              history.pushState(null, '', '/');
+              updateCtaForPath('/');
+              updateNavLinksForPath('/');
+            });
+          } else {
+            cta.textContent = 'Iniciar sesión';
+            cta.setAttribute('data-bs-toggle', 'modal');
+            cta.setAttribute('data-bs-target', '#loginModal');
+          }
+        }
+        function updateNavLinksForPath(p) {
+          var navList = document.querySelector('#mainNav .navbar-nav');
+          if (!navList) return;
+          if (p === '/formulario' || p === '/ofrecemos') {
+            navList.classList.add('d-none');
+          } else {
+            navList.classList.remove('d-none');
+          }
+        }
         var path = window.location.pathname;
         if (path === '/sobrenosotros') {
           frame.src = '/sobrenosotros.html?embed=1';
         } else if (path === '/contacto') {
           frame.src = '/contacto.html?embed=1';
-        } else if (path === '/ofrecemos') {
-          frame.src = '/ofrecemos.html?embed=1';
         } else if (path === '/formulario') {
           frame.src = '/formulario.html?embed=1';
+        } else if (path === '/ofrecemos') {
+          frame.src = '/ofrecemos.html?embed=1';
         } else {
           frame.src = '/index.html?embed=1';
         }
+        updateCtaForPath(path);
+        updateNavLinksForPath(path);
         window.addEventListener('popstate', function () {
           var p = window.location.pathname;
           if (p === '/sobrenosotros') frame.src = '/sobrenosotros.html?embed=1';
           else if (p === '/contacto') frame.src = '/contacto.html?embed=1';
-          else if (p === '/ofrecemos') frame.src = '/ofrecemos.html?embed=1';
           else if (p === '/formulario') frame.src = '/formulario.html?embed=1';
+          else if (p === '/ofrecemos') frame.src = '/ofrecemos.html?embed=1';
           else frame.src = '/index.html?embed=1';
+          updateCtaForPath(p);
+          updateNavLinksForPath(p);
         });
         var loginModalEl = document.getElementById('loginModal');
         var registerModalEl = document.getElementById('registerModal');
@@ -162,6 +200,24 @@
         document.querySelectorAll('.link-login-back').forEach(function (a) {
           a.addEventListener('click', function (e) { e.preventDefault(); registerModal.hide(); loginModal.show(); });
         });
+        var loginForm = loginModalEl.querySelector('form');
+        if (loginForm) {
+          loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            frame.src = '/formulario.html?embed=1';
+            history.pushState(null, '', '/formulario');
+            loginModal.hide();
+          });
+        }
+        var registerForm = registerModalEl.querySelector('form');
+        if (registerForm) {
+          registerForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            frame.src = '/formulario.html?embed=1';
+            history.pushState(null, '', '/formulario');
+            registerModal.hide();
+          });
+        }
       });
     </script>
   </body>

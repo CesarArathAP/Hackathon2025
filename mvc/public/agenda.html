@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=}, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div class="container py-4">
+      <div class="d-flex justify-content-between align-items-center mb-5">
+        <i class="bi bi-person-fill fs-2 text-success"></i>
+        <button class="btn btn-success fw-bold">Cerrar Sesión</button>
+      </div>
+
+      <h2 class="text-center fw-bold mb-4 text-success">AGENDA TU CITA</h2>
+
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <div class="row g-4">
+            <div class="col-md-6">
+              <div class="card shadow-lg border-0 rounded-4 bg-light h-100">
+                <div class="card-body p-4 p-md-5">
+                  <h4 class="card-title fw-bold text-success mb-4">
+                    Detalles de la Cita
+                  </h4>
+                  <form id="appointmentForm">
+                    <div class="mb-4">
+                      <label for="serviceSelect" class="form-label fw-semibold"
+                        >Servicio Requerido</label
+                      >
+                      <select class="form-select" id="serviceSelect" required>
+                        <option value="" disabled selected>
+                          Selecciona un servicio...
+                        </option>
+                        <option value="mapeo">Mapeo</option>
+                        <option value="gestion">Gestión</option>
+                        <option value="base_datos">Base de datos</option>
+                      </select>
+                    </div>
+
+                    <div class="mb-4">
+                      <label
+                        for="appointmentDateInput"
+                        class="form-label fw-semibold"
+                        >Fecha Seleccionada</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="appointmentDateInput"
+                        placeholder="Selecciona en el calendario..."
+                        readonly
+                        required
+                      />
+                      <small class="form-text text-muted"
+                        >Selecciona el día en el calendario de la
+                        derecha.</small
+                      >
+                    </div>
+
+                    <div class="mb-4">
+                      <label
+                        for="appointmentTime"
+                        class="form-label fw-semibold"
+                        >Hora Preferida</label
+                      >
+                      <input
+                        type="time"
+                        class="form-control"
+                        id="appointmentTime"
+                        required
+                      />
+                    </div>
+
+                    <div class="mb-4">
+                      <label
+                        for="appointmentComments"
+                        class="form-label fw-semibold"
+                        >Comentarios Adicionales (Opcional)</label
+                      >
+                      <textarea
+                        class="form-control"
+                        id="appointmentComments"
+                        rows="3"
+                        placeholder="Describe brevemente el motivo de la cita..."
+                      ></textarea>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                      <button type="submit" class="btn btn-success btn-lg">
+                        Agendar Cita
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="card shadow-lg border-0 rounded-4 bg-light h-100">
+                <div class="card-body p-4 p-md-5 d-flex flex-column">
+                  <h4 class="card-title fw-bold text-success mb-4 text-center">
+                    Selecciona la Fecha
+                  </h4>
+
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-3"
+                  >
+                    <button class="btn btn-sm text-success prev-month">
+                      <i class="bi bi-arrow-left-circle-fill fs-4"></i>
+                    </button>
+                    <span id="monthYearDisplay" class="fw-bold fs-5"
+                      >Noviembre 2025</span
+                    >
+                    <button class="btn btn-sm text-success next-month">
+                      <i class="bi bi-arrow-right-circle-fill fs-4"></i>
+                    </button>
+                  </div>
+
+                  <div class="table-responsive">
+                    <table
+                      class="table table-sm table-borderless text-center mb-0"
+                      id="calendarTable"
+                    >
+                      <thead>
+                        <tr class="text-secondary">
+                          <th>Dom</th>
+                          <th>Lun</th>
+                          <th>Mar</th>
+                          <th>Mié</th>
+                          <th>Jue</th>
+                          <th>Vie</th>
+                          <th>Sáb</th>
+                        </tr>
+                      </thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Inicializa el mes actual
+        let currentDate = new Date();
+        const monthNames = [
+          "Enero",
+          "Febrero",
+          "Marzo",
+          "Abril",
+          "Mayo",
+          "Junio",
+          "Julio",
+          "Agosto",
+          "Septiembre",
+          "Octubre",
+          "Noviembre",
+          "Diciembre",
+        ];
+
+        const calendarTableBody = document.querySelector(
+          "#calendarTable tbody"
+        );
+        const monthYearDisplay = document.getElementById("monthYearDisplay");
+        const dateInput = document.getElementById("appointmentDateInput");
+
+        // Estilos
+        const SELECTED_CLASS = "bg-success";
+        const TODAY_CLASS = "bg-light";
+
+        let selectedCell = null;
+
+        // Función para renderizar
+        function renderCalendar(date) {
+          calendarTableBody.innerHTML = "";
+
+          const month = date.getMonth();
+          const year = date.getFullYear();
+
+          // ✅ CORREGIDO
+          monthYearDisplay.textContent = `${monthNames[month]} ${year}`;
+
+          // Días
+          const firstDayOfMonth = new Date(year, month, 1).getDay();
+          const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+          let row = document.createElement("tr");
+
+          // Celdas vacías
+          for (let i = 0; i < firstDayOfMonth; i++) {
+            let cell = document.createElement("td");
+            row.appendChild(cell);
+          }
+
+          // Días
+          for (let i = 1; i <= daysInMonth; i++) {
+            if (row.children.length === 7) {
+              calendarTableBody.appendChild(row);
+              row = document.createElement("tr");
+            }
+
+            let cell = document.createElement("td");
+            cell.textContent = i;
+            cell.classList.add("day-cell", "rounded-3", "p-2");
+            cell.style.cursor = "pointer";
+
+            // ✅ CORREGIDO
+            cell.setAttribute(
+              "data-date",
+              `${year}-${String(month + 1).padStart(2, "0")}-${String(
+                i
+              ).padStart(2, "0")}`
+            );
+
+            // Hoy
+            const today = new Date();
+            if (
+              i === today.getDate() &&
+              month === today.getMonth() &&
+              year === today.getFullYear()
+            ) {
+              cell.classList.add(TODAY_CLASS, "fw-bold", "text-dark");
+            }
+
+            // Seleccionar fecha previa
+            if (dateInput.value === cell.getAttribute("data-date")) {
+              cell.classList.add(SELECTED_CLASS, "text-white", "fw-bold");
+              selectedCell = cell;
+            }
+
+            // Hover
+            cell.addEventListener("mouseover", function () {
+              if (!this.classList.contains(SELECTED_CLASS)) {
+                this.style.backgroundColor = "var(--brand-light)";
+                this.style.color = "var(--brand-dark)";
+              }
+            });
+
+            cell.addEventListener("mouseout", function () {
+              if (!this.classList.contains(SELECTED_CLASS)) {
+                this.style.backgroundColor = "";
+                this.style.color = this.classList.contains(TODAY_CLASS)
+                  ? "var(--bs-dark)"
+                  : "";
+              }
+            });
+
+            // Click
+            cell.addEventListener("click", function () {
+              if (selectedCell) {
+                selectedCell.classList.remove(SELECTED_CLASS, "text-white");
+                selectedCell.style.backgroundColor = "";
+                selectedCell.style.color = selectedCell.classList.contains(
+                  TODAY_CLASS
+                )
+                  ? "var(--bs-dark)"
+                  : "";
+              }
+
+              this.classList.add(SELECTED_CLASS, "text-white", "fw-bold");
+              this.style.backgroundColor = "";
+              this.style.color = "";
+              selectedCell = this;
+
+              dateInput.value = this.getAttribute("data-date");
+            });
+
+            row.appendChild(cell);
+          }
+
+          // Vacíos al final
+          while (row.children.length < 7) {
+            let emptyCell = document.createElement("td");
+            row.appendChild(emptyCell);
+          }
+
+          calendarTableBody.appendChild(row);
+        }
+
+        // Navegar meses
+        document
+          .querySelector(".prev-month")
+          .addEventListener("click", function () {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar(currentDate);
+          });
+
+        document
+          .querySelector(".next-month")
+          .addEventListener("click", function () {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar(currentDate);
+          });
+
+        // Render inicial
+        renderCalendar(currentDate);
+      });
+    </script>
+  </body>
+</html>
