@@ -14,6 +14,12 @@
             --gris-texto: #333;
         }
         
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--gris-texto);
@@ -26,29 +32,50 @@
             padding: 1rem 0;
         }
 
-        .navbar-brand .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--verde-principal);
+        .navbar-brand {
             display: flex;
             align-items: center;
-            justify-content: center;
-            border-radius: 4px;
         }
+
+        .logo-diamonds {
+            width: 50px;
+            height: 50px;
+            position: relative;
+            margin-right: 10px;
+        }
+
+        .diamond {
+            position: absolute;
+            background: var(--verde-principal);
+            width: 18px;
+            height: 18px;
+            transform: rotate(45deg);
+        }
+
+        .diamond:nth-child(1) { top: 0; left: 16px; }
+        .diamond:nth-child(2) { top: 16px; left: 0; }
+        .diamond:nth-child(3) { top: 16px; left: 32px; }
+        .diamond:nth-child(4) { top: 32px; left: 16px; }
 
         .nav-link {
             color: var(--gris-texto) !important;
             font-weight: 500;
-            margin: 0 1rem;
+            margin: 0 1.5rem;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--verde-principal) !important;
         }
 
         .btn-iniciar {
             background-color: var(--verde-principal);
             color: white;
             border: none;
-            padding: 0.5rem 1.5rem;
-            border-radius: 4px;
+            padding: 0.6rem 2rem;
+            border-radius: 6px;
             font-weight: 500;
+            transition: background-color 0.3s;
         }
 
         .btn-iniciar:hover {
@@ -57,165 +84,243 @@
 
         /* Hero Section */
         .hero-section {
-            background-color: var(--verde-claro);
-            padding: 4rem 0;
+            background: linear-gradient(135deg, #0f7d45 0%, #1a9e5a 100%);
+            padding: 5rem 0;
             position: relative;
+            color: white;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero-logo {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .hero-logo .diamond {
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .hero-logo .diamond:nth-child(1) { 
+            width: 60px; height: 60px; 
+            top: 0; left: 70px; 
+        }
+        .hero-logo .diamond:nth-child(2) { 
+            width: 60px; height: 60px; 
+            top: 70px; left: 0; 
+        }
+        .hero-logo .diamond:nth-child(3) { 
+            width: 60px; height: 60px; 
+            top: 70px; left: 140px; 
+        }
+        .hero-logo .diamond:nth-child(4) { 
+            width: 60px; height: 60px; 
+            top: 140px; left: 70px; 
+        }
+
+        .hero-brand-name {
+            font-size: 3rem;
+            font-weight: 300;
+            letter-spacing: 8px;
+            margin-bottom: 3rem;
         }
 
         .hero-title {
             font-size: 2.5rem;
             font-weight: 700;
-            color: var(--gris-texto);
+            margin-bottom: 2rem;
         }
 
         .hero-title span {
-            color: var(--verde-principal);
+            display: block;
+            font-weight: 400;
         }
 
-        .map-container {
-            position: relative;
-            height: 300px;
-            background: white;
+        .hero-description {
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .hero-objective {
+            background: rgba(255,255,255,0.1);
+            padding: 2rem;
             border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .map-placeholder {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
-            position: relative;
-        }
-
-        .map-marker {
-            position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 50px;
-            background: var(--verde-principal);
-            border-radius: 50% 50% 50% 0;
-            transform: rotate(-45deg);
-        }
-
-        .map-marker::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: white;
-            border-radius: 50%;
-            top: 10px;
-            left: 10px;
+            margin-top: 2rem;
+            line-height: 1.8;
         }
 
         /* Misión y Visión */
         .mision-vision-section {
             padding: 5rem 0;
+            background: white;
         }
 
         .section-box {
-            padding: 2rem;
+            padding: 3rem;
             background: white;
-            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
             height: 100%;
             transition: all 0.3s ease;
         }
 
         .section-box:hover {
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            border-color: var(--verde-principal);
             transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(15,125,69,0.15);
         }
 
         .section-title {
             color: var(--verde-principal);
             font-weight: 700;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             margin-bottom: 1.5rem;
             text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .section-text {
             text-align: justify;
-            line-height: 1.8;
+            line-height: 1.9;
             color: #555;
+            font-size: 1.05rem;
         }
 
         /* Valores Section */
         .valores-section {
             padding: 5rem 0;
-            background-color: #fafafa;
+            background: linear-gradient(to bottom, #f8fdf9 0%, #e8f5ec 100%);
+            position: relative;
         }
 
         .valores-title {
             text-align: center;
             color: var(--verde-principal);
             font-weight: 700;
-            font-size: 2rem;
+            font-size: 2.2rem;
             margin-bottom: 4rem;
             text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .valores-container {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .valores-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--verde-principal);
+            transform: translateX(-50%);
         }
 
         .valor-item {
+            position: relative;
+            margin-bottom: 3rem;
             display: flex;
             align-items: center;
-            margin-bottom: 3rem;
+            gap: 2rem;
         }
 
-        .valor-item:nth-child(even) {
-            flex-direction: row-reverse;
+        .valor-item.left {
+            justify-content: flex-end;
+            text-align: right;
+        }
+
+        .valor-item.right {
+            justify-content: flex-start;
+            text-align: left;
         }
 
         .valor-box {
             background: var(--verde-principal);
             color: white;
-            padding: 1.5rem 2rem;
+            padding: 1rem 2.5rem;
             border-radius: 8px;
             font-weight: 600;
             font-size: 1.1rem;
-            min-width: 200px;
-            text-align: center;
             box-shadow: 0 4px 12px rgba(15,125,69,0.3);
+            position: relative;
+            z-index: 2;
+            min-width: 180px;
+            text-align: center;
         }
 
         .valor-descripcion {
             flex: 1;
-            padding: 0 3rem;
+            max-width: 350px;
             color: #555;
-            line-height: 1.6;
-        }
-
-        .valor-line {
-            width: 2px;
-            height: 60px;
-            background: var(--verde-principal);
-            margin: 0 auto;
+            line-height: 1.7;
+            font-size: 0.95rem;
         }
 
         /* Footer */
         .footer-custom {
-            background-color: var(--verde-oscuro);
+            background: linear-gradient(135deg, #0a5530 0%, #0f7d45 100%);
             color: white;
             padding: 3rem 0 1.5rem;
         }
 
-        .footer-logo {
-            width: 60px;
-            height: 60px;
-            background: white;
-            border-radius: 4px;
+        .footer-logo-container {
             display: flex;
             align-items: center;
-            justify-content: center;
             margin-bottom: 1rem;
+        }
+
+        .footer-logo {
+            width: 50px;
+            height: 50px;
+            position: relative;
+            margin-right: 15px;
+        }
+
+        .footer-logo .diamond {
+            background: white;
+            width: 15px;
+            height: 15px;
+        }
+
+        .footer-brand {
+            font-size: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 4px;
+        }
+
+        .footer h6 {
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .footer-link {
+            color: white;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.8rem;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+
+        .footer-link:hover {
+            opacity: 1;
+            color: var(--verde-claro);
         }
 
         .social-icons a {
             color: white;
-            font-size: 1.5rem;
-            margin: 0 0.5rem;
+            font-size: 1.3rem;
+            margin-right: 1rem;
             transition: color 0.3s;
         }
 
@@ -227,35 +332,72 @@
             .hero-title {
                 font-size: 2rem;
             }
+
+            .hero-brand-name {
+                font-size: 2rem;
+            }
+
+            .hero-logo {
+                width: 150px;
+                height: 150px;
+            }
+
+            .hero-logo .diamond:nth-child(1) { 
+                width: 45px; height: 45px; 
+                top: 0; left: 52px; 
+            }
+            .hero-logo .diamond:nth-child(2) { 
+                width: 45px; height: 45px; 
+                top: 52px; left: 0; 
+            }
+            .hero-logo .diamond:nth-child(3) { 
+                width: 45px; height: 45px; 
+                top: 52px; left: 105px; 
+            }
+            .hero-logo .diamond:nth-child(4) { 
+                width: 45px; height: 45px; 
+                top: 105px; left: 52px; 
+            }
             
-            .valor-item,
-            .valor-item:nth-child(even) {
+            .valores-line {
+                display: none;
+            }
+
+            .valor-item.left,
+            .valor-item.right {
                 flex-direction: column !important;
+                text-align: center !important;
             }
             
             .valor-descripcion {
-                padding: 1.5rem 0;
-                text-align: center;
+                max-width: 100%;
             }
         }
     </style>
 </head>
-  <body>
-    <div id="navbar-container"></div>
+<body>
+
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <h1 class="hero-title">
-                        Sobre<br>
-                        <span>Nosotros</span>
-                    </h1>
-                </div>
-                <div class="col-lg-6">
-                    <div class="map-container">
-                        <div class="map-placeholder">
-                            <div class="map-marker"></div>
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="hero-content text-center">
+                        <!-- Coloca tu imagen de logo aquí -->
+                        <div class="hero-logo-image mx-auto mb-4">
+                            <img src="/assets/images/logo_blanco.jpeg" alt="Logo ORBBEX" class="img-fluid" style="max-width: 300px;">
+                        </div>
+                        <!-- Fin de la imagen del logo -->
+                        <h2 class="hero-title">
+                            Sobre<br>
+                            <span>Nosotros</span>
+                        </h2>
+                        <p class="hero-description">
+                            ORBBEX es una empresa especializada en el desarrollo de soluciones web inteligentes que se centran en la recopilación precisa y eficiente de información cartográfica. Nuestro servicio principal es transformar los procesos tradicionales de gestión territorial y catastral en herramientas digitales avanzadas.
+                        </p>
+                        <div class="hero-objective">
+                            <p class="mb-2"><strong>Nuestro objetivo es proporcionar a nuestros clientes sistemas innovadores</strong> que les permitan optimizar sus procesos y tomar decisiones basadas en datos confiables, ayudándoles a reducir errores, disminuir tiempos de actualización y costos en la obtención de información territorial.</p>
+                            <p class="mb-0">Buscamos posicionarnos como una plataforma confiable e innovadora para la recopilación y análisis de información cartográfica en México.</p>
                         </div>
                     </div>
                 </div>
@@ -279,7 +421,7 @@
                     <div class="section-box">
                         <h2 class="section-title">VISIÓN</h2>
                         <p class="section-text">
-                            Posicionarnos como una de las plataformas más confiables e innovadoras en soluciones web para la recopilación y análisis de información cartográfica en México, dedicando por nuestra precisión, eficiencia y capacidad para transformar procesos tradicionales en herramientas digitales avanzadas.
+                            Posicionarnos como una de las plataformas más confiables e innovadoras en soluciones web para la recopilación y análisis de información cartográfica en México, destacando por nuestra precisión, eficiencia y capacidad para transformar procesos tradicionales en herramientas digitales avanzadas.
                         </p>
                     </div>
                 </div>
@@ -292,43 +434,42 @@
         <div class="container">
             <h2 class="valores-title">VALORES</h2>
             
-            <div class="valor-item">
-                <div class="valor-box">Innovación</div>
-                <div class="valor-line"></div>
-                <div class="valor-descripcion">
-                    Impulsamos soluciones tecnológicas que adoptan lo más moderno en transformar procesos tradicionales.
-                </div>
-            </div>
+            <div class="valores-container">
+                <div class="valores-line"></div>
 
-            <div class="valor-item">
-                <div class="valor-descripcion">
-                    Ofrecemos precios justos por nuestro servicio, buscando y respetando el esfuerzo propio.
+                <div class="valor-item left">
+                    <div class="valor-descripcion">
+                        Impulsamos soluciones tecnológicas avanzadas enfocadas en transformar procesos tradicionales.
+                    </div>
+                    <div class="valor-box">Innovación</div>
                 </div>
-                <div class="valor-line"></div>
-                <div class="valor-box">Eficiencia</div>
-            </div>
 
-            <div class="valor-item">
-                <div class="valor-box">Transparencia</div>
-                <div class="valor-line"></div>
-                <div class="valor-descripcion">
-                    Clientes informados de sus avances y verificados por todos los usuarios.
+                <div class="valor-item right">
+                    <div class="valor-box">Eficiencia</div>
+                    <div class="valor-descripcion">
+                        Optimizamos procesos para ahorrar tiempo y recursos a nuestros clientes.
+                    </div>
                 </div>
-            </div>
 
-            <div class="valor-item">
-                <div class="valor-descripcion">
-                    Protegemos la información de cada cliente, manteniendo estrictas seguridades.
+                <div class="valor-item left">
+                    <div class="valor-descripcion">
+                        Creamos sistemas claros, confiables y verificables para todos los usuarios.
+                    </div>
+                    <div class="valor-box">Transparencia</div>
                 </div>
-                <div class="valor-line"></div>
-                <div class="valor-box">Confidencialidad</div>
-            </div>
 
-            <div class="valor-item">
-                <div class="valor-box">Precisión</div>
-                <div class="valor-line"></div>
-                <div class="valor-descripcion">
-                    Trabajamos con estándares y estrictos procesos técnicos.
+                <div class="valor-item right">
+                    <div class="valor-box">Confidencialidad</div>
+                    <div class="valor-descripcion">
+                        Protegemos la información de cada cliente con altos estándares de seguridad.
+                    </div>
+                </div>
+
+                <div class="valor-item left">
+                    <div class="valor-descripcion">
+                        Trabajamos con exactitud y estándares profesionales.
+                    </div>
+                    <div class="valor-box">Precisión</div>
                 </div>
             </div>
         </div>
@@ -339,19 +480,25 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-4 mb-4">
-                    <div class="footer-logo">
-                        <i class="bi bi-grid-3x3-gap text-success fs-3"></i>
+                    <div class="footer-logo-container">
+                        <div class="footer-logo">
+                            <div class="diamond"></div>
+                            <div class="diamond"></div>
+                            <div class="diamond"></div>
+                            <div class="diamond"></div>
+                        </div>
+                        <span class="footer-brand">ORBBEX</span>
                     </div>
                     <p class="small">Soluciones inteligentes para gestión catastral</p>
                 </div>
                 <div class="col-md-4 mb-4">
-                    <h6 class="fw-bold mb-3">Contacto</h6>
-                    <p class="small mb-1"><i class="bi bi-geo-alt me-2"></i>Ecatepec de Morelos, México</p>
-                    <p class="small mb-1"><i class="bi bi-envelope me-2"></i>contacto@ejemplo.com</p>
-                    <p class="small"><i class="bi bi-phone me-2"></i>+52 55 1234 5678</p>
+                    <h6>Contacto</h6>
+                    <a href="#" class="footer-link"><i class="bi bi-geo-alt me-2"></i>Ecatepec de Morelos, México</a>
+                    <a href="mailto:contacto@orbbex.com" class="footer-link"><i class="bi bi-envelope me-2"></i>Correo Electrónico</a>
+                    <a href="tel:+525512345678" class="footer-link"><i class="bi bi-phone me-2"></i>Contáctenos</a>
                 </div>
                 <div class="col-md-4 mb-4">
-                    <h6 class="fw-bold mb-3">Síguenos</h6>
+                    <h6>Redes Sociales</h6>
                     <div class="social-icons">
                         <a href="#"><i class="bi bi-facebook"></i></a>
                         <a href="#"><i class="bi bi-twitter-x"></i></a>
@@ -361,24 +508,11 @@
             </div>
             <hr class="border-light opacity-25 my-3">
             <div class="text-center small">
-                <p class="mb-0">&copy; 2024 Todos los derechos reservados</p>
+                <p class="mb-0">&copy; 2024 ORBBEX. Todos los derechos reservados</p>
             </div>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', async function () {
-        var params = new URLSearchParams(window.location.search);
-        var cont = document.getElementById('navbar-container');
-        if (cont && !params.has('embed')) {
-          try {
-            var html = await fetch('/partials/navbar.html').then(r => r.text());
-            cont.innerHTML = html;
-          } catch (e) {}
-        }
-      });
-    </script>
-    <script src="/js/navbar.js"></script>
-  </body>
-  </html>
+</body>
+</html>
