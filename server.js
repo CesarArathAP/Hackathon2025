@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require("express");
 const path = require("path");
+const fs = require("fs").promises;
 const bodyParser = require("body-parser");
 const PDFDocument = require("pdfkit");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
@@ -19,8 +20,12 @@ app.use(express.static(path.join(__dirname, "mvc/public")));
 // Servir assets
 app.use("/assets", express.static(path.join(__dirname, "mvc/assets")));
 
-// Servir archivos estáticos (para el segundo código)
+// Servir archivos estáticos
 app.use(express.static("."));
+
+// Crear carpeta para diagnósticos si no existe
+const diagnosticosDir = path.join(__dirname, "mvc/assets/diagnosticos");
+fs.mkdir(diagnosticosDir, { recursive: true }).catch(console.error);
 
 // ==================== FUNCIONES PARA IA ====================
 // Inicializar modelo de IA
@@ -43,18 +48,26 @@ Genera este JSON:
   "recomendaciones_IUCA": "",
   "resumen_ejecutivo": ""
 }
-  todos esto con un limite de 50 palabras por segmento, cada cosa que generes de texto tiene que ser en español
+Todos esto con un límite de 50 palabras por segmento, cada cosa que generes de texto tiene que ser en español.
+
 Respuestas del formulario:
 ${JSON.stringify(form, null, 2)}
 `;
+}
+
+// Función para generar nombre único de archivo
+function generarNombrePDF(idUsuario) {
+  const timestamp = Date.now();
+  const fecha = new Date().toISOString().split('T')[0];
+  return `diagnostico_${idUsuario}_${fecha}_${timestamp}.pdf`;
 }
 
 // ==================== RUTAS API IA ====================
 // Endpoint para generar diagnóstico con IA
 app.post("/api/generate", async (req, res) => {
   try {
-    const { form } = req.body;
-    if (!form) return res.status(400).send("Falta el campo form");
+    const { form, id_usuario } = req.body;
+    if (!form) return res.status(400).json({ error: "Falta el campo form" });
     
     const prompt = buildPrompt(form);
     const result = await model.generateContent(prompt);
@@ -67,48 +80,136 @@ app.post("/api/generate", async (req, res) => {
       return res.status(200).json({ error: "JSON inválido", raw: text });
     }
     
-    // Guardar globalmente para la página de resultado (temporal)
+    // Guardar globalmente para referencia temporal
     global.ultimoDiagnostico = json;
-    res.json({ diagnostico: json });
+    
+    res.json({ 
+      diagnostico: json,
+      message: "Diagnóstico generado exitosamente"
+    });
   } catch (err) {
-    res.status(500).send(err.message);
+    console.error("Error en /api/generate:", err);
+    res.status(500).json({ error: err.message });
   }
 });
 
-// Endpoint para generar PDF
-app.post("/api/pdf", (req, res) => {
-  const diag = req.body;
-  const doc = new PDFDocument({ margin: 50 });
-  const chunks = [];
-  
-  res.setHeader("Content-Type", "application/pdf");
-  res.setHeader("Content-Disposition", "attachment; filename=diagnostico_catastral.pdf");
-  
-  doc.on("data", chunks.push.bind(chunks));
-  doc.on("end", () => {
-    const pdf = Buffer.concat(chunks);
-    res.send(pdf);
-  });
-  
-  doc.fontSize(22).text("Diagnóstico Catastral", { align: "center" });
-  doc.moveDown();
-  doc.fontSize(14).text("Diagnóstico Técnico:", { underline: true });
-  doc.fontSize(12).text(diag.diagnostico_tecnico);
-  doc.moveDown();
-  doc.fontSize(14).text("Nivel de Madurez:", { underline: true });
-  doc.fontSize(12).text(diag.nivel_madurez);
-  doc.moveDown();
-  doc.fontSize(14).text("Recomendaciones IUCA:", { underline: true });
-  doc.fontSize(12).text(diag.recomendaciones_IUCA);
-  doc.moveDown();
-  doc.fontSize(14).text("Resumen Ejecutivo:", { underline: true });
-  doc.fontSize(12).text(diag.resumen_ejecutivo);
-  
-  doc.end();
+// Endpoint para generar y guardar PDF
+app.post("/api/pdf/generate", async (req, res) => {
+  try {
+    const { diagnostico, id_usuario } = req.body;
+    
+    if (!diagnostico || !id_usuario) {
+      return res.status(400).json({ 
+        error: "Se requiere el diagnóstico y el id_usuario" 
+      });
+    }
+
+    // Generar nombre único para el PDF
+    const nombrePDF = generarNombrePDF(id_usuario);
+    const rutaPDF = path.join(diagnosticosDir, nombrePDF);
+
+    // Crear el PDF
+    const doc = new PDFDocument({ margin: 50 });
+    const writeStream = require('fs').createWriteStream(rutaPDF);
+
+    doc.pipe(writeStream);
+
+    // Título principal
+    doc.fontSize(22).fillColor('#1b5e20').text("Diagnóstico Catastral", { align: "center" });
+    doc.moveDown();
+    doc.fillColor('#000000');
+    
+    // Fecha
+    doc.fontSize(10).text(`Fecha: ${new Date().toLocaleDateString('es-MX')}`, { align: "right" });
+    doc.moveDown(2);
+    
+    // Diagnóstico Técnico
+    doc.fontSize(14).fillColor('#1b5e20').text("Diagnóstico Técnico:", { underline: true });
+    doc.fillColor('#000000');
+    doc.fontSize(12).text(diagnostico.diagnostico_tecnico || "N/A", { align: "justify" });
+    doc.moveDown(1.5);
+    
+    // Nivel de Madurez
+    doc.fontSize(14).fillColor('#1b5e20').text("Nivel de Madurez:", { underline: true });
+    doc.fillColor('#000000');
+    doc.fontSize(12).text(diagnostico.nivel_madurez || "N/A", { align: "justify" });
+    doc.moveDown(1.5);
+    
+    // Recomendaciones IUCA
+    doc.fontSize(14).fillColor('#1b5e20').text("Recomendaciones IUCA:", { underline: true });
+    doc.fillColor('#000000');
+    doc.fontSize(12).text(diagnostico.recomendaciones_IUCA || "N/A", { align: "justify" });
+    doc.moveDown(1.5);
+    
+    // Resumen Ejecutivo
+    doc.fontSize(14).fillColor('#1b5e20').text("Resumen Ejecutivo:", { underline: true });
+    doc.fillColor('#000000');
+    doc.fontSize(12).text(diagnostico.resumen_ejecutivo || "N/A", { align: "justify" });
+    
+    doc.end();
+
+    // Esperar a que termine de escribirse el archivo
+    await new Promise((resolve, reject) => {
+      writeStream.on('finish', resolve);
+      writeStream.on('error', reject);
+    });
+
+    console.log(`✓ PDF guardado: ${nombrePDF}`);
+
+    // Registrar en la base de datos
+    let id_diagnostico = null;
+    try {
+      const { Diagnostico } = require("./mvc/models/modelos");
+      id_diagnostico = await Diagnostico.create({
+        id_usuario,
+        nombre: nombrePDF, // Solo guardamos el nombre del archivo
+        tiempo: new Date()
+      });
+      console.log(`✓ Diagnóstico registrado en BD con ID: ${id_diagnostico}`);
+    } catch (dbError) {
+      console.error("Error al registrar en BD:", dbError);
+    }
+
+    res.json({
+      success: true,
+      nombre_archivo: nombrePDF,
+      id_diagnostico: id_diagnostico,
+      ruta_descarga: `/api/diagnosticos/${id_diagnostico}/pdf`,
+      message: "PDF generado y guardado exitosamente"
+    });
+
+  } catch (err) {
+    console.error("Error al generar PDF:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Endpoint para descargar PDF (alternativo, también está en el controlador)
+app.get("/api/pdf/download/:nombreArchivo", async (req, res) => {
+  try {
+    const { nombreArchivo } = req.params;
+    const rutaPDF = path.join(diagnosticosDir, nombreArchivo);
+
+    // Verificar si existe
+    try {
+      await fs.access(rutaPDF);
+    } catch {
+      return res.status(404).json({ error: "Archivo no encontrado" });
+    }
+
+    res.download(rutaPDF, nombreArchivo, (err) => {
+      if (err) {
+        console.error("Error al descargar:", err);
+        res.status(500).json({ error: "Error al descargar el archivo" });
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // ==================== RUTAS API ORIGINALES ====================
-// Rutas de controladores originales
+// Rutas de controladores originales (incluye /api/diagnosticos)
 app.use("/api", controllers);
 
 // ==================== RUTAS DE PÁGINAS ====================
@@ -137,10 +238,28 @@ app.get("/ofrecemos", (req, res) => {
   res.sendFile(path.join(__dirname, "mvc/public/master.html"));
 });
 
+// Página de resultados
+app.get("/resultado", (req, res) => {
+  res.sendFile(path.join(__dirname, "resultado.html"));
+});
+
+// ==================== MANEJO DE ERRORES ====================
+// Middleware para rutas no encontradas
+app.use((req, res) => {
+  res.status(404).json({ error: "Ruta no encontrada" });
+});
+
+// Middleware para errores generales
+app.use((err, req, res, next) => {
+  console.error("Error en servidor:", err);
+  res.status(500).json({ error: "Error interno del servidor" });
+});
+
 // ==================== SERVIDOR ====================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`Servidor ejecutándose en http://localhost:${PORT}/`);
+  console.log(`✓ Servidor ejecutándose en http://localhost:${PORT}/`);
+  console.log(`✓ Carpeta de PDFs: ${diagnosticosDir}`);
   // Probar conexión a la base de datos al iniciar
   await testConnection();
 });
