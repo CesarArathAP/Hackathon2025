@@ -222,15 +222,20 @@
         <div class="modal-content border-0">
           <div class="modal-body p-4 bg-brand-light rounded">
             <h5 class="mb-3">Registrarse</h5>
-            <form>
+            <div id="regError" class="alert alert-danger d-none" role="alert"></div>
+            <form id="regForm">
               <div class="row g-3">
                 <div class="col-md-6">
                   <label for="regEstado" class="form-label">Estado</label>
-                  <input type="text" class="form-control" id="regEstado" placeholder="Ej. Jalisco" required>
+                  <select class="form-control" id="regEstado" required>
+                    <option value="">Selecciona un estado</option>
+                  </select>
                 </div>
                 <div class="col-md-6">
                   <label for="regMunicipio" class="form-label">Municipio</label>
-                  <input type="text" class="form-control" id="regMunicipio" placeholder="Ej. Guadalajara" required>
+                  <select class="form-control" id="regMunicipio" required disabled>
+                    <option value="">Primero selecciona un estado</option>
+                  </select>
                 </div>
                 <div class="col-md-6">
                   <label for="regNombre" class="form-label">Nombre</label>
@@ -243,6 +248,10 @@
                 <div class="col-12">
                   <label for="regCorreo" class="form-label">Correo</label>
                   <input type="email" class="form-control" id="regCorreo" placeholder="nombre@ejemplo.com" required>
+                </div>
+                <div class="col-12">
+                  <label for="regPassword" class="form-label">Contraseña</label>
+                  <input type="password" class="form-control" id="regPassword" placeholder="••••••••" required>
                 </div>
               </div>
               <button type="submit" class="btn btn-brand w-100 mt-3">Registrarse</button>
@@ -285,6 +294,122 @@
               registerModal.hide();
               loginModal.show();
             });
+          });
+        }
+
+        // Cargar estados al abrir el modal de registro
+        if (registerModalEl) {
+          registerModalEl.addEventListener('show.bs.modal', async function() {
+            await cargarEstadosFormulario();
+          });
+        }
+
+        // Función para cargar estados
+        async function cargarEstadosFormulario() {
+          try {
+            var response = await fetch('/api/estados');
+            var estados = await response.json();
+            var selectEstado = document.getElementById('regEstado');
+            if (selectEstado) {
+              selectEstado.innerHTML = '<option value="">Selecciona un estado</option>';
+              estados.forEach(function(estado) {
+                var option = document.createElement('option');
+                option.value = estado.id_estado;
+                option.textContent = estado.nombre_estado;
+                selectEstado.appendChild(option);
+              });
+            }
+          } catch (error) {
+            console.error('Error al cargar estados:', error);
+          }
+        }
+
+        // Cargar municipios cuando se seleccione un estado
+        var selectEstado = document.getElementById('regEstado');
+        var selectMunicipio = document.getElementById('regMunicipio');
+        if (selectEstado && selectMunicipio) {
+          selectEstado.addEventListener('change', async function() {
+            var estadoId = this.value;
+            selectMunicipio.disabled = true;
+            selectMunicipio.innerHTML = '<option value="">Cargando municipios...</option>';
+            
+            if (estadoId) {
+              try {
+                var response = await fetch('/api/municipios/estado/' + estadoId);
+                var municipios = await response.json();
+                selectMunicipio.innerHTML = '<option value="">Selecciona un municipio</option>';
+                municipios.forEach(function(municipio) {
+                  var option = document.createElement('option');
+                  option.value = municipio.id;
+                  option.textContent = municipio.nombre;
+                  selectMunicipio.appendChild(option);
+                });
+                selectMunicipio.disabled = false;
+              } catch (error) {
+                console.error('Error al cargar municipios:', error);
+                selectMunicipio.innerHTML = '<option value="">Error al cargar municipios</option>';
+              }
+            } else {
+              selectMunicipio.innerHTML = '<option value="">Primero selecciona un estado</option>';
+            }
+          });
+        }
+
+        // Manejar formulario de registro
+        var regForm = document.getElementById('regForm');
+        var regError = document.getElementById('regError');
+        if (regForm) {
+          regForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            if (regError) regError.classList.add('d-none');
+            
+            var id_municipio = document.getElementById('regMunicipio').value;
+            var nombre = document.getElementById('regNombre').value;
+            var telefono = document.getElementById('regTelefono').value;
+            var correo = document.getElementById('regCorreo').value;
+            var password = document.getElementById('regPassword').value;
+
+            if (!id_municipio) {
+              if (regError) {
+                regError.textContent = 'Por favor selecciona un estado y municipio';
+                regError.classList.remove('d-none');
+              }
+              return;
+            }
+
+            try {
+              var response = await fetch('/api/auth/registro', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: correo, password, nombre, telefono, id_municipio })
+              });
+
+              var data = await response.json();
+
+              if (response.ok && data.success && data.usuario) {
+                // Guardar información del usuario en localStorage
+                localStorage.setItem('usuario', JSON.stringify(data.usuario));
+                localStorage.setItem('isLoggedIn', 'true');
+                
+                // Cerrar modal y recargar página
+                if (registerModalEl) {
+                  var registerModal = bootstrap.Modal.getInstance(registerModalEl);
+                  if (registerModal) registerModal.hide();
+                }
+                window.location.reload();
+              } else {
+                if (regError) {
+                  regError.textContent = data.error || 'Error al registrar usuario';
+                  regError.classList.remove('d-none');
+                }
+              }
+            } catch (error) {
+              if (regError) {
+                regError.textContent = 'Error de conexión. Por favor, intenta de nuevo.';
+                regError.classList.remove('d-none');
+              }
+              console.error('Error:', error);
+            }
           });
         }
         var coincidenciaPadron = document.getElementById('coincidenciaPadron');

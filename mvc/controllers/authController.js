@@ -6,11 +6,23 @@ const { Usuario } = require('../models/modelos');
 // Función de registro de usuario
 const handleRegistro = async (req, res) => {
   try {
-    const { email, password, nombre, telefono, estado, municipio } = req.body;
+    const { email, password, nombre, telefono, id_municipio } = req.body;
 
-    // Validar campos requeridos
-    if (!email || !password || !nombre || !telefono || !estado || !municipio) {
-      return res.status(400).json({ error: 'Todos los campos son requeridos' });
+    // Validar campos requeridos con mensajes específicos
+    if (!email) {
+      return res.status(400).json({ error: 'El correo electrónico es requerido' });
+    }
+    if (!password) {
+      return res.status(400).json({ error: 'La contraseña es requerida' });
+    }
+    if (!nombre) {
+      return res.status(400).json({ error: 'El nombre es requerido' });
+    }
+    if (!telefono) {
+      return res.status(400).json({ error: 'El teléfono es requerido' });
+    }
+    if (!id_municipio) {
+      return res.status(400).json({ error: 'Debes seleccionar un municipio' });
     }
 
     // Verificar si el usuario ya existe
@@ -23,15 +35,20 @@ const handleRegistro = async (req, res) => {
     const saltRounds = 10;
     const password_hash = await bcrypt.hash(password, saltRounds);
 
-    // Crear el usuario (guardamos estado y municipio en el nombre por ahora)
-    // En producción, sería mejor agregar campos a la tabla
-    const nombreCompleto = `${nombre} (${estado}, ${municipio})`;
+    // Convertir id_municipio a número si viene como string
+    const idMunicipioNum = parseInt(id_municipio, 10);
+    if (isNaN(idMunicipioNum)) {
+      return res.status(400).json({ error: 'El ID del municipio no es válido' });
+    }
+
+    // Crear el usuario con id_municipio
     const nuevoUsuarioId = await Usuario.create({
       email,
       password_hash,
-      nombre: nombreCompleto,
-      telefono,
-      rol: 'comercial'
+      nombre,
+      telefono: telefono.toString(),
+      rol: 'comercial',
+      id_municipios: idMunicipioNum
     });
 
     // Obtener el usuario completo recién creado para autenticarlo automáticamente
@@ -48,7 +65,7 @@ const handleRegistro = async (req, res) => {
       usuario: {
         id: usuarioCreado.id_usuario,
         email: usuarioCreado.email,
-        nombre: usuarioCreado.nombre || nombreCompleto,
+        nombre: usuarioCreado.nombre || nombre,
         rol: usuarioCreado.rol || 'comercial'
       }
     });

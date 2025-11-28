@@ -76,11 +76,15 @@
               <div class="row g-3">
                 <div class="col-md-6">
                   <label for="mRegEstado" class="form-label">Estado</label>
-                  <input type="text" class="form-control" id="mRegEstado" placeholder="Ej. Jalisco" required>
+                  <select class="form-control" id="mRegEstado" required>
+                    <option value="">Selecciona un estado</option>
+                  </select>
                 </div>
                 <div class="col-md-6">
                   <label for="mRegMunicipio" class="form-label">Municipio</label>
-                  <input type="text" class="form-control" id="mRegMunicipio" placeholder="Ej. Guadalajara" required>
+                  <select class="form-control" id="mRegMunicipio" required disabled>
+                    <option value="">Primero selecciona un estado</option>
+                  </select>
                 </div>
                 <div class="col-md-6">
                   <label for="mRegNombre" class="form-label">Nombre</label>
@@ -206,6 +210,65 @@
           });
         }
 
+        // Cargar estados al abrir el modal de registro
+        var registerModalEl = document.getElementById('registerModal');
+        if (registerModalEl) {
+          registerModalEl.addEventListener('show.bs.modal', async function() {
+            await cargarEstados();
+          });
+        }
+
+        // Función para cargar estados
+        async function cargarEstados() {
+          try {
+            var response = await fetch('/api/estados');
+            var estados = await response.json();
+            var selectEstado = document.getElementById('mRegEstado');
+            if (selectEstado) {
+              selectEstado.innerHTML = '<option value="">Selecciona un estado</option>';
+              estados.forEach(function(estado) {
+                var option = document.createElement('option');
+                option.value = estado.id_estado;
+                option.textContent = estado.nombre_estado;
+                selectEstado.appendChild(option);
+              });
+            }
+          } catch (error) {
+            console.error('Error al cargar estados:', error);
+          }
+        }
+
+        // Cargar municipios cuando se seleccione un estado
+        var selectEstado = document.getElementById('mRegEstado');
+        var selectMunicipio = document.getElementById('mRegMunicipio');
+        if (selectEstado && selectMunicipio) {
+          selectEstado.addEventListener('change', async function() {
+            var estadoId = this.value;
+            selectMunicipio.disabled = true;
+            selectMunicipio.innerHTML = '<option value="">Cargando municipios...</option>';
+            
+            if (estadoId) {
+              try {
+                var response = await fetch('/api/municipios/estado/' + estadoId);
+                var municipios = await response.json();
+                selectMunicipio.innerHTML = '<option value="">Selecciona un municipio</option>';
+                municipios.forEach(function(municipio) {
+                  var option = document.createElement('option');
+                  option.value = municipio.id;
+                  option.textContent = municipio.nombre;
+                  selectMunicipio.appendChild(option);
+                });
+                selectMunicipio.disabled = false;
+              } catch (error) {
+                console.error('Error al cargar municipios:', error);
+                selectMunicipio.innerHTML = '<option value="">Error al cargar municipios</option>';
+              }
+            } else {
+              selectMunicipio.innerHTML = '<option value="">Primero selecciona un estado</option>';
+            }
+          });
+        }
+
         // Manejar formulario de registro
         var regForm = document.getElementById('mRegForm');
         var regError = document.getElementById('mRegError');
@@ -214,18 +277,23 @@
             e.preventDefault();
             regError.classList.add('d-none');
             
-            var estado = document.getElementById('mRegEstado').value;
-            var municipio = document.getElementById('mRegMunicipio').value;
+            var id_municipio = document.getElementById('mRegMunicipio').value;
             var nombre = document.getElementById('mRegNombre').value;
             var telefono = document.getElementById('mRegTelefono').value;
             var correo = document.getElementById('mRegCorreo').value;
             var password = document.getElementById('mRegPassword').value;
 
+            if (!id_municipio) {
+              regError.textContent = 'Por favor selecciona un estado y municipio';
+              regError.classList.remove('d-none');
+              return;
+            }
+
             try {
               var response = await fetch('/api/auth/registro', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: correo, password, nombre, telefono, estado, municipio })
+                body: JSON.stringify({ email: correo, password, nombre, telefono, id_municipio })
               });
 
               var data = await response.json();

@@ -23,10 +23,10 @@ const Usuario = {
 
   // Crear nuevo usuario
   async create(usuarioData) {
-    const { email, password_hash, nombre, rol = 'comercial', telefono } = usuarioData;
-    const sql = `INSERT INTO usuarios (email, password_hash, nombre, rol, telefono) 
-                 VALUES (?, ?, ?, ?, ?)`;
-    const result = await query(sql, [email, password_hash, nombre, rol, telefono]);
+    const { email, password_hash, nombre, rol = 'comercial', telefono, id_municipios } = usuarioData;
+    const sql = `INSERT INTO usuarios (email, password_hash, nombre, rol, telefono, id_municipios) 
+                 VALUES (?, ?, ?, ?, ?, ?)`;
+    const result = await query(sql, [email, password_hash, nombre, rol, telefono, id_municipios]);
     return result.insertId;
   },
 
