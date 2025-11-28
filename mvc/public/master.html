@@ -28,9 +28,13 @@
           <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
             <li class="nav-item"><a class="nav-link" id="link-sobre" href="/sobrenosotros">Sobre Nosotros</a></li>
             <li class="nav-item"><a class="nav-link" id="link-contacto" href="/contacto">Contáctenos</a></li>
-            <li class="nav-item d-none"><a class="nav-link" id="link-formulario" href="/formulario">Formulario</a></li>
+            <li class="nav-item d-none" id="nav-item-formulario"><a class="nav-link" id="link-formulario" href="/formulario">Formulario</a></li>
           </ul>
-          <a class="btn btn-brand" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar sesión</a>
+          <a class="btn btn-brand" id="btn-login" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar sesión</a>
+          <div class="d-none" id="user-info">
+            <span class="me-2" id="user-name"></span>
+            <button class="btn btn-outline-danger btn-sm" id="btn-logout">Cerrar sesión</button>
+          </div>
         </div>
       </div>
     </nav>
@@ -42,7 +46,8 @@
         <div class="modal-content border-0">
           <div class="modal-body p-4 bg-light rounded">
             <h5 class="mb-3">Iniciar Sesión</h5>
-            <form>
+            <div id="mLoginError" class="alert alert-danger d-none" role="alert"></div>
+            <form id="mLoginForm">
               <div class="mb-3">
                 <label for="mLoginEmail" class="form-label">Correo</label>
                 <input type="email" class="form-control" id="mLoginEmail" placeholder="nombre@ejemplo.com" required>
@@ -66,7 +71,8 @@
         <div class="modal-content border-0">
           <div class="modal-body p-4 bg-light rounded">
             <h5 class="mb-3">Registrarse</h5>
-            <form>
+            <div id="mRegError" class="alert alert-danger d-none" role="alert"></div>
+            <form id="mRegForm">
               <div class="row g-3">
                 <div class="col-md-6">
                   <label for="mRegEstado" class="form-label">Estado</label>
@@ -88,11 +94,11 @@
                   <label for="mRegCorreo" class="form-label">Correo</label>
                   <input type="email" class="form-control" id="mRegCorreo" placeholder="nombre@ejemplo.com" required>
                 </div>
-              </div>
-              <div class="col-12">
+                <div class="col-12">
                   <label for="mRegPassword" class="form-label">Contraseña</label>
                   <input type="password" class="form-control" id="mRegPassword" placeholder="••••••••" required>
                 </div>
+              </div>
               <button type="submit" class="btn btn-brand w-100 mt-3">Registrarse</button>
               <div class="text-center mt-2">
                 <small>¿Ya tienes cuenta? <a href="#" class="link-success link-login-back">Iniciar Sesión</a></small>
@@ -155,6 +161,150 @@
         document.querySelectorAll('.link-login-back').forEach(function (a) {
           a.addEventListener('click', function (e) { e.preventDefault(); registerModal.hide(); loginModal.show(); });
         });
+
+        // Manejar formulario de login
+        var loginForm = document.getElementById('mLoginForm');
+        var loginError = document.getElementById('mLoginError');
+        if (loginForm) {
+          loginForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            loginError.classList.add('d-none');
+            
+            var email = document.getElementById('mLoginEmail').value;
+            var password = document.getElementById('mLoginPassword').value;
+
+            try {
+              var response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+              });
+
+              var data = await response.json();
+
+              if (response.ok && data.success) {
+                // Guardar información del usuario en localStorage
+                localStorage.setItem('usuario', JSON.stringify(data.usuario));
+                localStorage.setItem('isLoggedIn', 'true');
+                
+                // Cerrar modal, actualizar UI y redirigir a formulario
+                loginModal.hide();
+                updateAuthUI();
+                frame.src = '/formulario.html?embed=1';
+                history.pushState(null, '', '/formulario');
+              } else {
+                loginError.textContent = data.error || 'Error al iniciar sesión';
+                loginError.classList.remove('d-none');
+              }
+            } catch (error) {
+              loginError.textContent = 'Error de conexión. Por favor, intenta de nuevo.';
+              loginError.classList.remove('d-none');
+              console.error('Error:', error);
+            }
+          });
+        }
+
+        // Manejar formulario de registro
+        var regForm = document.getElementById('mRegForm');
+        var regError = document.getElementById('mRegError');
+        if (regForm) {
+          regForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            regError.classList.add('d-none');
+            
+            var estado = document.getElementById('mRegEstado').value;
+            var municipio = document.getElementById('mRegMunicipio').value;
+            var nombre = document.getElementById('mRegNombre').value;
+            var telefono = document.getElementById('mRegTelefono').value;
+            var correo = document.getElementById('mRegCorreo').value;
+            var password = document.getElementById('mRegPassword').value;
+
+            try {
+              var response = await fetch('/api/auth/registro', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: correo, password, nombre, telefono, estado, municipio })
+              });
+
+              var data = await response.json();
+
+              if (response.ok && data.success) {
+                // Guardar información del usuario en localStorage
+                localStorage.setItem('usuario', JSON.stringify(data.usuario));
+                localStorage.setItem('isLoggedIn', 'true');
+                
+                // Cerrar modal y redirigir a formulario
+                registerModal.hide();
+                updateAuthUI();
+                frame.src = '/formulario.html?embed=1';
+                history.pushState(null, '', '/formulario');
+              } else {
+                regError.textContent = data.error || 'Error al registrar usuario';
+                regError.classList.remove('d-none');
+              }
+            } catch (error) {
+              regError.textContent = 'Error de conexión. Por favor, intenta de nuevo.';
+              regError.classList.remove('d-none');
+              console.error('Error:', error);
+            }
+          });
+        }
+
+        // Función para actualizar la UI según el estado de autenticación
+        function updateAuthUI() {
+          var isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+          var usuarioStr = localStorage.getItem('usuario');
+          var usuario = null;
+          
+          try {
+            if (usuarioStr) {
+              usuario = JSON.parse(usuarioStr);
+            }
+          } catch (e) {
+            console.error('Error al parsear usuario:', e);
+            usuario = null;
+          }
+          
+          var btnLogin = document.getElementById('btn-login');
+          var userInfo = document.getElementById('user-info');
+          var userName = document.getElementById('user-name');
+          var btnLogout = document.getElementById('btn-logout');
+          var navFormulario = document.getElementById('nav-item-formulario');
+
+          if (isLoggedIn && usuario) {
+            if (btnLogin) btnLogin.classList.add('d-none');
+            if (userInfo) userInfo.classList.remove('d-none');
+            if (userName) {
+              var nombreMostrar = 'Usuario';
+              if (usuario.nombre) {
+                nombreMostrar = usuario.nombre;
+              } else if (usuario.email) {
+                nombreMostrar = usuario.email;
+              }
+              userName.textContent = nombreMostrar;
+            }
+            if (navFormulario) navFormulario.classList.remove('d-none');
+          } else {
+            if (btnLogin) btnLogin.classList.remove('d-none');
+            if (userInfo) userInfo.classList.add('d-none');
+            if (navFormulario) navFormulario.classList.add('d-none');
+          }
+        }
+
+        // Manejar cierre de sesión
+        var btnLogout = document.getElementById('btn-logout');
+        if (btnLogout) {
+          btnLogout.addEventListener('click', function () {
+            localStorage.removeItem('usuario');
+            localStorage.removeItem('isLoggedIn');
+            updateAuthUI();
+            frame.src = '/index.html?embed=1';
+            history.pushState(null, '', '/');
+          });
+        }
+
+        // Actualizar UI al cargar
+        updateAuthUI();
       });
     </script>
   </body>
