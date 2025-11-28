@@ -1,3 +1,4 @@
 # Hackathon2025
 
-![Descripción de la imagen](mvc/assets/imagenes/imagen1.jpg)
+![Descripción de la imagen](mvc/assets/images/imagen1.jpg)
+
