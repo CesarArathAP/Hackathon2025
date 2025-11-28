@@ -332,6 +332,12 @@
         }
         .action-done i { margin-right: 6px; }
 
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
     </style>
 </head>
 <body>
@@ -390,9 +396,9 @@
             <div class="card">
                 <div class="card-content">
                     <h3>Total Diagnoses</h3>
-                    <div class="card-number">247</div>
+                    <div class="card-number" id="total-diagnoses">0</div>
                     <div class="trend positive">
-                        <i class="bi bi-arrow-up-short"></i> +12% from last month
+                        <i class="bi bi-arrow-up-short"></i> Total registros
                     </div>
                 </div>
                 <div class="icon-box blue">
@@ -401,10 +407,10 @@
             </div>
             <div class="card">
                 <div class="card-content">
-                    <h3>Meeting Requests</h3>
-                    <div class="card-number">38</div>
+                    <h3>Pendientes</h3>
+                    <div class="card-number" id="total-pendientes">0</div>
                     <div class="trend positive">
-                        <i class="bi bi-arrow-up-short"></i> +8% from last month
+                        <i class="bi bi-arrow-up-short"></i> Por contactar
                     </div>
                 </div>
                 <div class="icon-box light-blue">
@@ -413,10 +419,10 @@
             </div>
             <div class="card">
                 <div class="card-content">
-                    <h3>Proposals Pending</h3>
-                    <div class="card-number">15</div>
+                    <h3>Contactados</h3>
+                    <div class="card-number" id="total-contactados">0</div>
                     <div class="trend negative">
-                        <i class="bi bi-arrow-down-short"></i> -3% from last month
+                        <i class="bi bi-arrow-down-short"></i> Ya contactados
                     </div>
                 </div>
                 <div class="icon-box light-red">
@@ -442,130 +448,170 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="table-body">
                     <tr>
-                        <td>
-                            <div class="municipality-cell">
-                                <div class="municipality-icon"><i class="bi bi-building"></i></div>
-                                Ayuntamiento de Madrid
-                            </div>
-                        </td>
-                        <td>
-                            <div>2025-11-25</div>
-                            <div style="color: var(--text-secondary); font-size: 13px;">14:30</div>
-                        </td>
-                        <td>
-                            <div class="contact-info">
-                                <div><strong>María García López</strong></div>
-                                <div class="contact-email"><i class="bi bi-envelope"></i> maria.garcia@madrid.es</div>
-                                <div class="contact-phone"><i class="bi bi-telephone"></i> +34 91 234 5678</div>
-                            </div>
-                        </td>
-                        <td><span class="status-badge badge-red">Meeting Requested</span></td>
-                        <td>
-                            <button class="btn-report">
-                                <i class="bi bi-file-pdf"></i> View PDF Report
-                            </button>
-                        </td>
-                        <td>
-                            <div class="action-mark">
-                                <i class="bi bi-check2"></i> Mark as Contacted
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="municipality-cell">
-                                <div class="municipality-icon"><i class="bi bi-building"></i></div>
-                                Ayuntamiento de Barcelona
-                            </div>
-                        </td>
-                        <td>
-                            <div>2025-11-24</div>
-                            <div style="color: var(--text-secondary); font-size: 13px;">10:15</div>
-                        </td>
-                        <td>
-                            <div class="contact-info">
-                                <div><strong>Joan Martínez Vila</strong></div>
-                                <div class="contact-email"><i class="bi bi-envelope"></i> j.martinez@barcelona.cat</div>
-                                <div class="contact-phone"><i class="bi bi-telephone"></i> +34 93 567 8901</div>
-                            </div>
-                        </td>
-                        <td><span class="status-badge badge-dark">Proposal Requested</span></td>
-                        <td>
-                            <button class="btn-report">
-                                <i class="bi bi-file-pdf"></i> View PDF Report
-                            </button>
-                        </td>
-                        <td>
-                            <div class="action-mark">
-                                <i class="bi bi-check2"></i> Mark as Contacted
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="municipality-cell">
-                                <div class="municipality-icon"><i class="bi bi-building"></i></div>
-                                Ayuntamiento de Valencia
-                            </div>
-                        </td>
-                        <td>
-                            <div>2025-11-23</div>
-                            <div style="color: var(--text-secondary); font-size: 13px;">16:45</div>
-                        </td>
-                        <td>
-                            <div class="contact-info">
-                                <div><strong>Ana Rodríguez Pérez</strong></div>
-                                <div class="contact-email"><i class="bi bi-envelope"></i> a.rodriguez@valencia.es</div>
-                                <div class="contact-phone"><i class="bi bi-telephone"></i> +34 96 345 6789</div>
-                            </div>
-                        </td>
-                        <td><span class="status-badge badge-grey">Diagnosis Only</span></td>
-                        <td>
-                            <button class="btn-report">
-                                <i class="bi bi-file-pdf"></i> View PDF Report
-                            </button>
-                        </td>
-                        <td>
-                            <div class="action-done">
-                                <i class="bi bi-check2-all"></i> Contacted
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="municipality-cell">
-                                <div class="municipality-icon"><i class="bi bi-building"></i></div>
-                                Ayuntamiento de Sevilla
-                            </div>
-                        </td>
-                        <td>
-                            <div>2025-11-22</div>
-                            <div style="color: var(--text-secondary); font-size: 13px;">11:00</div>
-                        </td>
-                        <td>
-                            <div class="contact-info">
-                                <div><strong>Carlos Fernández Ruiz</strong></div>
-                                <div class="contact-email"><i class="bi bi-envelope"></i> c.fernandez@sevilla.org</div>
-                                <div class="contact-phone"><i class="bi bi-telephone"></i> +34 95 456 7890</div>
-                            </div>
-                        </td>
-                        <td><span class="status-badge badge-red">Meeting Requested</span></td>
-                        <td>
-                            <button class="btn-report">
-                                <i class="bi bi-file-pdf"></i> View PDF Report
-                            </button>
-                        </td>
-                        <td>
-                            <div class="action-mark">
-                                <i class="bi bi-check2"></i> Mark as Contacted
-                            </div>
-                        </td>
+                        <td colspan="6" class="loading">Cargando datos...</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </main>
+
+    <script>
+        // Función para formatear fecha
+        function formatearFecha(fechaString) {
+            const fecha = new Date(fechaString);
+            const fechaFormateada = fecha.toLocaleDateString('es-MX', { 
+                year: 'numeric', 
+                month: '2-digit', 
+                day: '2-digit' 
+            });
+            const horaFormateada = fecha.toLocaleTimeString('es-MX', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            return { fecha: fechaFormateada, hora: horaFormateada };
+        }
+
+        // Función para obtener el badge de estado
+        function obtenerBadgeEstado(status) {
+            if (status === 'pendiente') {
+                return '<span class="status-badge badge-red">Pendiente</span>';
+            } else {
+                return '<span class="status-badge badge-grey">Contactado</span>';
+            }
+        }
+
+        // Función para obtener el botón de acción
+        function obtenerBotonAccion(id, status) {
+            if (status === 'pendiente') {
+                return `<div class="action-mark" onclick="marcarContactado(${id})">
+                    <i class="bi bi-check2"></i> Marcar como Contactado
+                </div>`;
+            } else {
+                return `<div class="action-done">
+                    <i class="bi bi-check2-all"></i> Contactado
+                </div>`;
+            }
+        }
+
+        // Función para cargar datos del dashboard
+        async function cargarDashboard() {
+            try {
+                const response = await fetch('/api/dashboard/data');
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Actualizar estadísticas
+                    document.getElementById('total-diagnoses').textContent = result.stats.total;
+                    document.getElementById('total-pendientes').textContent = result.stats.pendientes;
+                    document.getElementById('total-contactados').textContent = result.stats.contactados;
+
+                    // Actualizar tabla
+                    const tbody = document.getElementById('table-body');
+                    tbody.innerHTML = '';
+
+                    if (result.data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6" class="loading">No hay diagnósticos registrados</td></tr>';
+                        return;
+                    }
+
+                    result.data.forEach(item => {
+                        const { fecha, hora } = formatearFecha(item.time);
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>
+                                <div class="municipality-cell">
+                                    <div class="municipality-icon"><i class="bi bi-building"></i></div>
+                                    ${item.municipality}
+                                </div>
+                            </td>
+                            <td>
+                                <div>${fecha}</div>
+                                <div style="color: var(--text-secondary); font-size: 13px;">${hora}</div>
+                            </td>
+                            <td>
+                                <div class="contact-info">
+                                    <div><strong>${item.contactInfo.nombre}</strong></div>
+                                    <div class="contact-email"><i class="bi bi-envelope"></i> ${item.contactInfo.email}</div>
+                                    <div class="contact-phone"><i class="bi bi-telephone"></i> ${item.contactInfo.telefono}</div>
+                                </div>
+                            </td>
+                            <td>${obtenerBadgeEstado(item.status)}</td>
+                            <td>
+                                <button class="btn-report" onclick="verReporte('${item.report}')">
+                                    <i class="bi bi-file-pdf"></i> Ver PDF Report
+                                </button>
+                            </td>
+                            <td>
+                                ${obtenerBotonAccion(item.id_diagnostico, item.status)}
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                } else {
+                    throw new Error('Error al cargar datos');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('table-body').innerHTML = 
+                    '<tr><td colspan="6" class="loading">Error al cargar los datos. Por favor, recarga la página.</td></tr>';
+            }
+        }
+
+        // Función para marcar como contactado
+        async function marcarContactado(id) {
+            try {
+                const response = await fetch(`/api/dashboard/contactado/${id}`, {
+                    method: 'PUT'
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Recargar los datos
+                    await cargarDashboard();
+                } else {
+                    alert('Error al marcar como contactado');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al marcar como contactado');
+            }
+        }
+
+        // Función para ver el reporte PDF
+        function verReporte(nombreArchivo) {
+            // Buscar el archivo primero en /assets/diagnosticos (ubicación antigua)
+            // y luego en /diagnosticos (ubicación nueva)
+            const rutaAntigua = `/assets/diagnosticos/${nombreArchivo}`;
+            const rutaNueva = `/diagnosticos/${nombreArchivo}`;
+            
+            // Intentar primero con la ruta antigua (donde están los PDFs actuales)
+            window.open(rutaAntigua, '_blank');
+        }
+
+        // Función de búsqueda
+        function buscar() {
+            const input = document.querySelector('.search-bar input');
+            const filtro = input.value.toLowerCase();
+            const filas = document.querySelectorAll('#table-body tr');
+            
+            filas.forEach(fila => {
+                const texto = fila.textContent.toLowerCase();
+                fila.style.display = texto.includes(filtro) ? '' : 'none';
+            });
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarDashboard();
+            
+            // Agregar evento de búsqueda
+            const searchInput = document.querySelector('.search-bar input');
+            if (searchInput) {
+                searchInput.addEventListener('input', buscar);
+            }
+        });
+    </script>
 </body>
 </html>

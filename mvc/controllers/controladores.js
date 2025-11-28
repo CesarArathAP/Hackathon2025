@@ -9,6 +9,7 @@ const preguntasController = require('./preguntasController');
 const respuestasController = require('./respuestasController');
 const agendaController = require('./agendaController');
 const estadosController = require('./estadosController');
+const dashboardController = require('./dashboardController');
 
 // Ruta de estado general
 router.get('/status', (req, res) => {
@@ -22,6 +23,7 @@ router.use('/diagnosticos', diagnosticosController);
 router.use('/preguntas', preguntasController);
 router.use('/respuestas', respuestasController);
 router.use('/agenda', agendaController);
+router.use('/dashboard', dashboardController);
 router.use('/', estadosController); // Estados y municipios en la raíz
 
 module.exports = router;

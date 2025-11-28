@@ -45,24 +45,43 @@ router.get('/:id/pdf', async (req, res) => {
       return res.status(404).json({ error: 'Diagnóstico no encontrado' });
     }
 
-    // El nombre del PDF está guardado en el campo 'nombre'
-    const pdfPath = path.join(__dirname, '../../assets/diagnosticos', diagnostico.nombre);
+    // Buscar el PDF en ambas ubicaciones posibles
+    const pdfPathNueva = path.join(__dirname, '../../diagnosticos', diagnostico.nombre);
+    const pdfPathAntigua = path.join(__dirname, '../../assets/diagnosticos', diagnostico.nombre);
     
-    // Verificar si el archivo existe
+    let pdfPath = null;
+    
+    // Intentar primero en la nueva ubicación (raíz/diagnosticos)
     try {
-      await fs.access(pdfPath);
+      await fs.access(pdfPathNueva);
+      pdfPath = pdfPathNueva;
     } catch {
-      return res.status(404).json({ error: 'Archivo PDF no encontrado' });
+      // Si no está en la nueva ubicación, buscar en la antigua
+      try {
+        await fs.access(pdfPathAntigua);
+        pdfPath = pdfPathAntigua;
+      } catch {
+        return res.status(404).json({ 
+          error: 'Archivo PDF no encontrado',
+          nombre: diagnostico.nombre,
+          ubicaciones_buscadas: [pdfPathNueva, pdfPathAntigua]
+        });
+      }
     }
 
-    // Enviar el archivo
-    res.download(pdfPath, diagnostico.nombre, (err) => {
+    // Enviar el archivo para visualización en el navegador
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="${diagnostico.nombre}"`);
+    res.sendFile(pdfPath, (err) => {
       if (err) {
-        console.error('Error al descargar PDF:', err);
-        res.status(500).json({ error: 'Error al descargar el archivo' });
+        console.error('Error al enviar PDF:', err);
+        if (!res.headersSent) {
+          res.status(500).json({ error: 'Error al enviar el archivo' });
+        }
       }
     });
   } catch (error) {
+    console.error('Error en ruta PDF:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -123,13 +142,20 @@ router.delete('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Diagnóstico no encontrado' });
     }
 
-    // Eliminar el archivo PDF si existe
-    const pdfPath = path.join(__dirname, '../../assets/diagnosticos', diagnostico.nombre);
+    // Eliminar el archivo PDF si existe (buscar en ambas ubicaciones)
+    const pdfPathNueva = path.join(__dirname, '../../diagnosticos', diagnostico.nombre);
+    const pdfPathAntigua = path.join(__dirname, '../../assets/diagnosticos', diagnostico.nombre);
+    
     try {
-      await fs.unlink(pdfPath);
+      await fs.unlink(pdfPathNueva);
       console.log(`PDF eliminado: ${diagnostico.nombre}`);
-    } catch (err) {
-      console.warn(`No se pudo eliminar el PDF: ${err.message}`);
+    } catch {
+      try {
+        await fs.unlink(pdfPathAntigua);
+        console.log(`PDF eliminado: ${diagnostico.nombre}`);
+      } catch (err) {
+        console.warn(`No se pudo eliminar el PDF: ${err.message}`);
+      }
     }
 
     // Eliminar el registro de la BD

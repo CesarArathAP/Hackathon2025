@@ -20,11 +20,14 @@ app.use(express.static(path.join(__dirname, "mvc/public")));
 // Servir assets
 app.use("/assets", express.static(path.join(__dirname, "mvc/assets")));
 
+// Servir carpeta de diagnósticos
+app.use("/diagnosticos", express.static(path.join(__dirname, "diagnosticos")));
+
 // Servir archivos estáticos
 app.use(express.static("."));
 
 // Crear carpeta para diagnósticos si no existe
-const diagnosticosDir = path.join(__dirname, "mvc/assets/diagnosticos");
+const diagnosticosDir = path.join(__dirname, "diagnosticos");
 fs.mkdir(diagnosticosDir, { recursive: true }).catch(console.error);
 
 // ==================== FUNCIONES PARA IA ====================
@@ -241,6 +244,11 @@ app.get("/ofrecemos", (req, res) => {
 // Página de resultados
 app.get("/resultado", (req, res) => {
   res.sendFile(path.join(__dirname, "resultado.html"));
+});
+
+// Página Dashboard
+app.get("/dashboard", (req, res) => {
+  res.sendFile(path.join(__dirname, "mvc/public/dashboard.html"));
 });
 
 // ==================== MANEJO DE ERRORES ====================
