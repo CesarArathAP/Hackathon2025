@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Catastro • Master</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+      :root { --brand: #2f9e44; --brand-dark: #1e7a33; --brand-light: #e9f7ef; }
+      .text-brand { color: var(--brand); }
+      .btn-brand { background-color: var(--brand); color: #fff; }
+      .btn-brand:hover { background-color: var(--brand-dark); color: #fff; }
+      #app-frame { width: 100%; height: calc(100vh - 64px); border: 0; }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="/">
+          <i class="bi bi-diamond-fill text-brand me-2"></i>
+          <span class="fw-semibold">Catastro</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" id="link-sobre" href="/sobrenosotros">Sobre Nosotros</a></li>
+            <li class="nav-item"><a class="nav-link" id="link-contacto" href="/contacto">Contáctenos</a></li>
+            <li class="nav-item d-none"><a class="nav-link" id="link-formulario" href="/formulario">Formulario</a></li>
+          </ul>
+          <a class="btn btn-brand" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar sesión</a>
+        </div>
+      </div>
+    </nav>
+
+    <iframe id="app-frame" src="/index.html?embed=1"></iframe>
+
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+          <div class="modal-body p-4 bg-light rounded">
+            <h5 class="mb-3">Iniciar Sesión</h5>
+            <form>
+              <div class="mb-3">
+                <label for="mLoginEmail" class="form-label">Correo</label>
+                <input type="email" class="form-control" id="mLoginEmail" placeholder="nombre@ejemplo.com" required>
+              </div>
+              <div class="mb-3">
+                <label for="mLoginPassword" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="mLoginPassword" placeholder="••••••••" required>
+              </div>
+              <button type="submit" class="btn btn-brand w-100">Iniciar Sesión</button>
+              <div class="text-center mt-2">
+                <small>¿No tienes cuenta? <a href="#" class="link-success link-register">Registrarse</a></small>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+          <div class="modal-body p-4 bg-light rounded">
+            <h5 class="mb-3">Registrarse</h5>
+            <form>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="mRegEstado" class="form-label">Estado</label>
+                  <input type="text" class="form-control" id="mRegEstado" placeholder="Ej. Jalisco" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="mRegMunicipio" class="form-label">Municipio</label>
+                  <input type="text" class="form-control" id="mRegMunicipio" placeholder="Ej. Guadalajara" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="mRegNombre" class="form-label">Nombre</label>
+                  <input type="text" class="form-control" id="mRegNombre" placeholder="Tu nombre" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="mRegTelefono" class="form-label">Teléfono</label>
+                  <input type="tel" class="form-control" id="mRegTelefono" placeholder="+52 55 1234 5678" required>
+                </div>
+                <div class="col-12">
+                  <label for="mRegCorreo" class="form-label">Correo</label>
+                  <input type="email" class="form-control" id="mRegCorreo" placeholder="nombre@ejemplo.com" required>
+                </div>
+              </div>
+              <div class="col-12">
+                  <label for="mRegPassword" class="form-label">Contraseña</label>
+                  <input type="password" class="form-control" id="mRegPassword" placeholder="••••••••" required>
+                </div>
+              <button type="submit" class="btn btn-brand w-100 mt-3">Registrarse</button>
+              <div class="text-center mt-2">
+                <small>¿Ya tienes cuenta? <a href="#" class="link-success link-login-back">Iniciar Sesión</a></small>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var frame = document.getElementById('app-frame');
+        var linkSobre = document.getElementById('link-sobre');
+        var linkContacto = document.getElementById('link-contacto');
+        var linkFormulario = document.getElementById('link-formulario');
+        [linkSobre, linkContacto, linkFormulario].forEach(function (a) {
+          a && a.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (a.id === 'link-sobre') {
+              frame.src = '/sobrenosotros.html?embed=1';
+              history.pushState(null, '', '/sobrenosotros');
+            } else if (a.id === 'link-contacto') {
+              frame.src = '/contacto.html?embed=1';
+              history.pushState(null, '', '/contacto');
+            } else if (a.id === 'link-formulario') {
+              frame.src = '/formulario.html?embed=1';
+              history.pushState(null, '', '/formulario');
+            } else {
+              frame.src = '/index.html?embed=1';
+              history.pushState(null, '', '/');
+            }
+          });
+        });
+        var path = window.location.pathname;
+        if (path === '/sobrenosotros') {
+          frame.src = '/sobrenosotros.html?embed=1';
+        } else if (path === '/contacto') {
+          frame.src = '/contacto.html?embed=1';
+        } else if (path === '/formulario') {
+          frame.src = '/formulario.html?embed=1';
+        } else {
+          frame.src = '/index.html?embed=1';
+        }
+        window.addEventListener('popstate', function () {
+          var p = window.location.pathname;
+          if (p === '/sobrenosotros') frame.src = '/sobrenosotros.html?embed=1';
+          else if (p === '/contacto') frame.src = '/contacto.html?embed=1';
+          else if (p === '/formulario') frame.src = '/formulario.html?embed=1';
+          else frame.src = '/index.html?embed=1';
+        });
+        var loginModalEl = document.getElementById('loginModal');
+        var registerModalEl = document.getElementById('registerModal');
+        var loginModal = bootstrap.Modal.getOrCreateInstance(loginModalEl);
+        var registerModal = bootstrap.Modal.getOrCreateInstance(registerModalEl);
+        document.querySelectorAll('.link-register').forEach(function (a) {
+          a.addEventListener('click', function (e) { e.preventDefault(); loginModal.hide(); registerModal.show(); });
+        });
+        document.querySelectorAll('.link-login-back').forEach(function (a) {
+          a.addEventListener('click', function (e) { e.preventDefault(); registerModal.hide(); loginModal.show(); });
+        });
+      });
+    </script>
+  </body>
+  </html>

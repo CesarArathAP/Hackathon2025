@@ -9,19 +9,30 @@ app.use(express.json());
 // Servir carpeta public
 app.use(express.static(path.join(__dirname, "mvc/public")));
 
-// Servir assets como carpeta pública
+// Servir assets
 app.use("/assets", express.static(path.join(__dirname, "mvc/assets")));
 
 // Rutas API
 app.use("/api", controllers);
 
-// Ruta principal
+// Página inicial (index)
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "mvc/public/index.html"));
+  res.sendFile(path.join(__dirname, "mvc/public/master.html"));
 });
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "/public/sobrenosotros.html"));
+// Página Sobre Nosotros
+app.get("/sobrenosotros", (req, res) => {
+  res.sendFile(path.join(__dirname, "mvc/public/master.html"));
+});
+
+// Página Contáctenos
+app.get("/contacto", (req, res) => {
+  res.sendFile(path.join(__dirname, "mvc/public/master.html"));
+});
+
+// Página sobre nosotros usa master
+app.get("/formulario", (req, res) => {
+  res.sendFile(path.join(__dirname, "mvc/public/master.html"));
 });
 
 // Servidor

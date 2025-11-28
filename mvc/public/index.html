@@ -25,24 +25,7 @@
     </style>
   <!-- </head>    -->
   <body>
-    <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
-      <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="#">
-          <i class="bi bi-diamond-fill text-brand me-2"></i>
-          <span class="fw-semibold">Catastro</span>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="mainNav">
-          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link" href="/sobrenosotros">Sobre Nosotros</a></li>
-            <li class="nav-item"><a class="nav-link" href="/contacto">Contáctenos</a></li>
-          </ul>
-          <a class="btn btn-brand" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar sesión</a>
-        </div>
-      </div>
-    </nav>
+    <div id="navbar-container"></div>
 
     <section class="container-fluid p-0">
       <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
@@ -235,92 +218,19 @@
         </div>
       </div>
     </footer>
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0">
-          <div class="modal-body p-4 bg-brand-light rounded">
-            <h5 class="mb-3">Iniciar Sesión</h5>
-            <form>
-              <div class="mb-3">
-                <label for="loginEmail" class="form-label">Correo</label>
-                <input type="email" class="form-control" id="loginEmail" placeholder="nombre@ejemplo.com" required>
-              </div>
-              <div class="mb-3">
-                <label for="loginPassword" class="form-label">Contraseña</label>
-                <input type="password" class="form-control" id="loginPassword" placeholder="••••••••" required>
-              </div>
-              <button type="submit" class="btn btn-brand w-100">Iniciar Sesión</button>
-              <div class="text-center mt-2">
-                <small>¿No tienes cuenta? <a href="#" class="link-success link-register">Registrarse</a></small>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0">
-          <div class="modal-body p-4 bg-brand-light rounded">
-            <h5 class="mb-3">Registrarse</h5>
-            <form>
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <label for="regEstado" class="form-label">Estado</label>
-                  <input type="text" class="form-control" id="regEstado" placeholder="Ej. Jalisco" required>
-                </div>
-                <div class="col-md-6">
-                  <label for="regMunicipio" class="form-label">Municipio</label>
-                  <input type="text" class="form-control" id="regMunicipio" placeholder="Ej. Guadalajara" required>
-                </div>
-                <div class="col-md-6">
-                  <label for="regNombre" class="form-label">Nombre</label>
-                  <input type="text" class="form-control" id="regNombre" placeholder="Tu nombre" required>
-                </div>
-                <div class="col-md-6">
-                  <label for="regTelefono" class="form-label">Teléfono</label>
-                  <input type="tel" class="form-control" id="regTelefono" placeholder="+52 55 1234 5678" required>
-                </div>
-                <div class="col-12">
-                  <label for="regCorreo" class="form-label">Correo</label>
-                  <input type="email" class="form-control" id="regCorreo" placeholder="nombre@ejemplo.com" required>
-                </div>
-              </div>
-              <button type="submit" class="btn btn-brand w-100 mt-3">Registrarse</button>
-              <div class="text-center mt-2">
-                <small>¿Ya tienes cuenta? <a href="#" class="link-success link-login-back">Iniciar Sesión</a></small>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        var loginModalEl = document.getElementById('loginModal');
-        var registerModalEl = document.getElementById('registerModal');
-        if (!loginModalEl || !registerModalEl) return;
-        var loginModal = bootstrap.Modal.getOrCreateInstance(loginModalEl);
-        var registerModal = bootstrap.Modal.getOrCreateInstance(registerModalEl);
-        var toRegisterLinks = document.querySelectorAll('.link-register');
-        toRegisterLinks.forEach(function (a) {
-          a.addEventListener('click', function (e) {
-            e.preventDefault();
-            loginModal.hide();
-            registerModal.show();
-          });
-        });
-        var toLoginLinks = document.querySelectorAll('.link-login-back');
-        toLoginLinks.forEach(function (a) {
-          a.addEventListener('click', function (e) {
-            e.preventDefault();
-            registerModal.hide();
-            loginModal.show();
-          });
-        });
+      document.addEventListener('DOMContentLoaded', async function () {
+        var params = new URLSearchParams(window.location.search);
+        var cont = document.getElementById('navbar-container');
+        if (cont && !params.has('embed')) {
+          try {
+            var html = await fetch('/partials/navbar.html').then(r => r.text());
+            cont.innerHTML = html;
+          } catch (e) {}
+        }
       });
     </script>
+    <script src="/js/navbar.js"></script>
   </body>
   </html>
