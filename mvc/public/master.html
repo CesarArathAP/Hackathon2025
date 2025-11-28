@@ -109,8 +109,9 @@
         var frame = document.getElementById('app-frame');
         var linkSobre = document.getElementById('link-sobre');
         var linkContacto = document.getElementById('link-contacto');
+        var linkOfrecemos = document.getElementById('link-ofrecemos');
         var linkFormulario = document.getElementById('link-formulario');
-        [linkSobre, linkContacto, linkFormulario].forEach(function (a) {
+        [linkSobre, linkContacto, linkOfrecemos, linkFormulario].forEach(function (a) {
           a && a.addEventListener('click', function (e) {
             e.preventDefault();
             if (a.id === 'link-sobre') {
@@ -119,6 +120,9 @@
             } else if (a.id === 'link-contacto') {
               frame.src = '/contacto.html?embed=1';
               history.pushState(null, '', '/contacto');
+            } else if (a.id === 'link-ofrecemos') {
+              frame.src = '/ofrecemos.html?embed=1';
+              history.pushState(null, '', '/ofrecemos');
             } else if (a.id === 'link-formulario') {
               frame.src = '/formulario.html?embed=1';
               history.pushState(null, '', '/formulario');
@@ -144,6 +148,7 @@
           var p = window.location.pathname;
           if (p === '/sobrenosotros') frame.src = '/sobrenosotros.html?embed=1';
           else if (p === '/contacto') frame.src = '/contacto.html?embed=1';
+          else if (p === '/ofrecemos') frame.src = '/ofrecemos.html?embed=1';
           else if (p === '/formulario') frame.src = '/formulario.html?embed=1';
           else frame.src = '/index.html?embed=1';
         });

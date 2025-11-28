@@ -59,8 +59,6 @@
       .offer-info-icon:hover {
           color: var(--brand-light);
       }
-      .offer-desc { margin: 8px 0 0; font-size: 0.95rem; color: #555; }
-      .offer-more { font-weight: 600; }
       .text-offer-title {
           color: var(--brand);
           font-size: 2.5rem;
@@ -86,35 +84,26 @@
             <li class="nav-item"><a class="nav-link" href="/sobrenosotros">Sobre Nosotros</a></li>
             <li class="nav-item"><a class="nav-link" href="/contacto">Contáctenos</a></li>
           </ul>
+          <a class="btn btn-brand" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar sesión</a>
         </div>
       </div>
     </nav>
 
     <main class="offer-container">
-      <h1 class="text-offer-title">TE OFRECEMOS</h1>
 
       <div class="offer-card">
-        <div class="flex-grow-1">
-          <span class="offer-card-title">Mapeo</span>
-          <p class="offer-desc">Generación y actualización de cartografía predial mediante el uso de inteligencia artificial y tecnología satelital.</p>
-        </div>
-        <span class="offer-more text-brand">Ver más</span>
+        <span class="offer-card-title">Mapeo</span>
+        <i class="bi bi-info-circle offer-info-icon" data-bs-toggle="modal" data-bs-target="#serviceModal" data-service-name="Mapeo" data-service-desc="Generación y actualización de cartografía predial mediante el uso de inteligencia artificial y tecnología satelital."></i>
       </div>
 
       <div class="offer-card">
-        <div class="flex-grow-1">
-          <span class="offer-card-title">Gestión</span>
-          <p class="offer-desc">Herramientas para la administración eficiente de la información catastral, incluyendo flujos de trabajo y reportes personalizados.</p>
-        </div>
-        <span class="offer-more text-brand">Ver más</span>
+        <span class="offer-card-title">Gestión</span>
+        <i class="bi bi-info-circle offer-info-icon" data-bs-toggle="modal" data-bs-target="#serviceModal" data-service-name="Gestión" data-service-desc="Herramientas para la administración eficiente de la información catastral, incluyendo flujos de trabajo y reportes personalizados."></i>
       </div>
 
       <div class="offer-card">
-        <div class="flex-grow-1">
-          <span class="offer-card-title">Base de datos</span>
-          <p class="offer-desc">Diseño, implementación y mantenimiento de bases de datos robustas y seguras para almacenar toda la información catastral municipal.</p>
-        </div>
-        <span class="offer-more text-brand">Ver más</span>
+        <span class="offer-card-title">Base de datos</span>
+        <i class="bi bi-info-circle offer-info-icon" data-bs-toggle="modal" data-bs-target="#serviceModal" data-service-name="Base de datos" data-service-desc="Diseño, implementación y mantenimiento de bases de datos robustas y seguras para almacenar toda la información catastral municipal."></i>
       </div>
     </main>
     <footer class="footer py-4">
@@ -136,7 +125,23 @@
       </div>
     </footer>
 
-    
+    <div class="modal fade" id="serviceModal" tabindex="-1" aria-labelledby="serviceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0">
+                <div class="modal-header bg-brand text-white border-0">
+                    <h5 class="modal-title" id="serviceModalLabel">Detalle del Servicio</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body bg-brand-light">
+                    <h4 id="serviceModalTitle" class="text-brand mb-3"></h4>
+                    <p id="serviceModalDescription" class="text-dark"></p>
+                </div>
+                <div class="modal-footer bg-brand-light border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
@@ -201,7 +206,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      // Modo embed
+      // Lógica para alternar entre modales de Iniciar Sesión y Registrarse y modo embed
       document.addEventListener('DOMContentLoaded', function () {
         var params = new URLSearchParams(window.location.search);
         if (params.has('embed')) {
@@ -209,6 +214,46 @@
           if (navEl) navEl.remove();
           var embedModals = document.querySelectorAll('#loginModal, #registerModal');
           embedModals.forEach(function (el) { el && el.remove(); });
+        }
+        var loginModalEl = document.getElementById('loginModal');
+        var registerModalEl = document.getElementById('registerModal');
+        if (!loginModalEl || !registerModalEl) return;
+        var loginModal = bootstrap.Modal.getOrCreateInstance(loginModalEl);
+        var registerModal = bootstrap.Modal.getOrCreateInstance(registerModalEl);
+        var toRegisterLinks = document.querySelectorAll('.link-register');
+        toRegisterLinks.forEach(function (a) {
+          a.addEventListener('click', function (e) {
+            e.preventDefault();
+            loginModal.hide();
+            registerModal.show();
+          });
+        });
+        var toLoginLinks = document.querySelectorAll('.link-login-back');
+        toLoginLinks.forEach(function (a) {
+          a.addEventListener('click', function (e) {
+            e.preventDefault();
+            registerModal.hide();
+            loginModal.show();
+          });
+        });
+
+        // Lógica para el Modal de Servicios (Nuevo)
+        var serviceModalEl = document.getElementById('serviceModal');
+        if (serviceModalEl) {
+            serviceModalEl.addEventListener('show.bs.modal', function (event) {
+                // Botón que disparó el modal
+                var button = event.relatedTarget;
+                // Extraer información de los atributos data-*
+                var serviceName = button.getAttribute('data-service-name');
+                var serviceDesc = button.getAttribute('data-service-desc');
+
+                // Actualizar el contenido del modal
+                var modalTitle = serviceModalEl.querySelector('#serviceModalTitle');
+                var modalDescription = serviceModalEl.querySelector('#serviceModalDescription');
+
+                modalTitle.textContent = serviceName;
+                modalDescription.textContent = serviceDesc;
+            });
         }
       });
     </script>
