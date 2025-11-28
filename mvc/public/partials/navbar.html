@@ -46,33 +46,38 @@
     <div class="modal-content border-0">
       <div class="modal-body p-4 bg-brand-light rounded">
         <h5 class="mb-3">Registrarse</h5>
-        <form>
+        <div id="regErrorNav" class="alert alert-danger d-none" role="alert"></div>
+        <form id="regFormNav">
           <div class="row g-3">
             <div class="col-md-6">
-              <label for="regEstado" class="form-label">Estado</label>
-              <input type="text" class="form-control" id="regEstado" placeholder="Ej. Jalisco" required>
+              <label for="regEstadoNav" class="form-label">Estado</label>
+              <select class="form-control" id="regEstadoNav" required>
+                <option value="">Selecciona un estado</option>
+              </select>
             </div>
             <div class="col-md-6">
-              <label for="regMunicipio" class="form-label">Municipio</label>
-              <input type="text" class="form-control" id="regMunicipio" placeholder="Ej. Guadalajara" required>
+              <label for="regMunicipioNav" class="form-label">Municipio</label>
+              <select class="form-control" id="regMunicipioNav" required disabled>
+                <option value="">Primero selecciona un estado</option>
+              </select>
             </div>
             <div class="col-md-6">
-              <label for="regNombre" class="form-label">Nombre</label>
-              <input type="text" class="form-control" id="regNombre" placeholder="Tu nombre" required>
+              <label for="regNombreNav" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="regNombreNav" placeholder="Tu nombre" required>
             </div>
             <div class="col-md-6">
-              <label for="regTelefono" class="form-label">Teléfono</label>
-              <input type="tel" class="form-control" id="regTelefono" placeholder="+52 55 1234 5678" required>
+              <label for="regTelefonoNav" class="form-label">Teléfono</label>
+              <input type="tel" class="form-control" id="regTelefonoNav" placeholder="+52 55 1234 5678" required>
             </div>
             <div class="col-12">
-              <label for="regCorreo" class="form-label">Correo</label>
-              <input type="email" class="form-control" id="regCorreo" placeholder="nombre@ejemplo.com" required>
+              <label for="regCorreoNav" class="form-label">Correo</label>
+              <input type="email" class="form-control" id="regCorreoNav" placeholder="nombre@ejemplo.com" required>
+            </div>
+            <div class="col-12">
+              <label for="regPasswordNav" class="form-label">Contraseña</label>
+              <input type="password" class="form-control" id="regPasswordNav" placeholder="••••••••" required>
             </div>
           </div>
-          <div class="col-12">
-                  <label for="mRegPassword" class="form-label">Contraseña</label>
-                  <input type="password" class="form-control" id="mRegPassword" placeholder="••••••••" required>
-                </div>
           <button type="submit" class="btn btn-brand w-100 mt-3">Registrarse</button>
           <div class="text-center mt-2">
             <small>¿Ya tienes cuenta? <a href="#" class="link-success link-login-back">Iniciar Sesión</a></small>
@@ -96,5 +101,116 @@
     document.querySelectorAll('.link-login-back').forEach(function (a) {
       a.addEventListener('click', function (e) { e.preventDefault(); registerModal.hide(); loginModal.show(); });
     });
+
+    // Cargar estados al abrir el modal de registro
+    registerModalEl.addEventListener('show.bs.modal', async function() {
+      await cargarEstadosNavbar();
+    });
+
+    // Función para cargar estados
+    async function cargarEstadosNavbar() {
+      try {
+        var response = await fetch('/api/estados');
+        var estados = await response.json();
+        var selectEstado = document.getElementById('regEstadoNav');
+        if (selectEstado) {
+          selectEstado.innerHTML = '<option value="">Selecciona un estado</option>';
+          estados.forEach(function(estado) {
+            var option = document.createElement('option');
+            option.value = estado.id_estado;
+            option.textContent = estado.nombre_estado;
+            selectEstado.appendChild(option);
+          });
+        }
+      } catch (error) {
+        console.error('Error al cargar estados:', error);
+      }
+    }
+
+    // Cargar municipios cuando se seleccione un estado
+    var selectEstado = document.getElementById('regEstadoNav');
+    var selectMunicipio = document.getElementById('regMunicipioNav');
+    if (selectEstado && selectMunicipio) {
+      selectEstado.addEventListener('change', async function() {
+        var estadoId = this.value;
+        selectMunicipio.disabled = true;
+        selectMunicipio.innerHTML = '<option value="">Cargando municipios...</option>';
+        
+        if (estadoId) {
+          try {
+            var response = await fetch('/api/municipios/estado/' + estadoId);
+            var municipios = await response.json();
+            selectMunicipio.innerHTML = '<option value="">Selecciona un municipio</option>';
+            municipios.forEach(function(municipio) {
+              var option = document.createElement('option');
+              option.value = municipio.id;
+              option.textContent = municipio.nombre;
+              selectMunicipio.appendChild(option);
+            });
+            selectMunicipio.disabled = false;
+          } catch (error) {
+            console.error('Error al cargar municipios:', error);
+            selectMunicipio.innerHTML = '<option value="">Error al cargar municipios</option>';
+          }
+        } else {
+          selectMunicipio.innerHTML = '<option value="">Primero selecciona un estado</option>';
+        }
+      });
+    }
+
+    // Manejar formulario de registro
+    var regForm = document.getElementById('regFormNav');
+    var regError = document.getElementById('regErrorNav');
+    if (regForm) {
+      regForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        if (regError) regError.classList.add('d-none');
+        
+        var id_municipio = document.getElementById('regMunicipioNav').value;
+        var nombre = document.getElementById('regNombreNav').value;
+        var telefono = document.getElementById('regTelefonoNav').value;
+        var correo = document.getElementById('regCorreoNav').value;
+        var password = document.getElementById('regPasswordNav').value;
+
+        if (!id_municipio) {
+          if (regError) {
+            regError.textContent = 'Por favor selecciona un estado y municipio';
+            regError.classList.remove('d-none');
+          }
+          return;
+        }
+
+        try {
+          var response = await fetch('/api/auth/registro', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: correo, password, nombre, telefono, id_municipio })
+          });
+
+          var data = await response.json();
+
+          if (response.ok && data.success && data.usuario) {
+            // Guardar información del usuario en localStorage
+            localStorage.setItem('usuario', JSON.stringify(data.usuario));
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            // Cerrar modal y recargar página
+            registerModal.hide();
+            window.location.reload();
+          } else {
+            if (regError) {
+              regError.textContent = data.error || 'Error al registrar usuario';
+              regError.classList.remove('d-none');
+            }
+          }
+        } catch (error) {
+          if (regError) {
+            regError.textContent = 'Error de conexión. Por favor, intenta de nuevo.';
+            regError.classList.remove('d-none');
+          }
+          console.error('Error:', error);
+        }
+      });
+    }
   });
 </script>
