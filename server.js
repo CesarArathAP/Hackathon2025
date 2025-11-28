@@ -1,7 +1,9 @@
+require('dotenv').config();
 const express = require("express");
 const path = require("path");
 const app = express();
 const controllers = require("./mvc/controllers/controladores");
+const { testConnection } = require("./mvc/db/config");
 
 // Parse JSON
 app.use(express.json());
@@ -26,6 +28,8 @@ app.get("/", (req, res) => {
 
 // Servidor
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Server running at http://localhost:${PORT}/`);
+  // Probar conexión a la base de datos al iniciar
+  await testConnection();
 });
