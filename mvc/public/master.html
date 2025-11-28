@@ -294,14 +294,13 @@
               var data = await response.json();
 
               if (response.ok && data.success && data.usuario) {
-                // Guardar información del usuario en localStorage
-                localStorage.setItem('usuario', JSON.stringify(data.usuario));
-                localStorage.setItem('isLoggedIn', 'true');
-
-                // Cerrar modal y recargar página
-                registerModal.hide();
-                window.location.reload();
-              } else {
+  // Guardar información del usuario en localStorage
+  localStorage.setItem('usuario', JSON.stringify(data.usuario));
+  localStorage.setItem('isLoggedIn', 'true');
+  
+  // Redirigir al formulario
+  window.location.href = '/formulario'; // ✅ O LA RUTA QUE SEA TU FORM
+}else {
                 if (regError) {
                   regError.textContent = data.error || 'Error al registrar usuario';
                   regError.classList.remove('d-none');
